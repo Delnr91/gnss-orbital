@@ -2295,12 +2295,12 @@ input[type="range"]::-webkit-slider-thumb:hover {
    RESPONSIVE DESIGN (iPad / Mobile First adjustments)
    ==================================================================== */
 
-@media (max-width: 1024px) {
-    /* iPad Portrait / Small Tablets */
+@media (max-width: 1200px) {
+    /* iPad Pro / Air Landscape / Tablets */
     .app-container {
         flex-direction: column;
-        height: auto;
-        min-height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
     }
     .sidebar {
         width: 100%;
@@ -2308,6 +2308,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
         border-right: none;
         border-bottom: 1px solid rgba(0, 168, 255, 0.12);
         padding: 15px 20px;
+        flex-shrink: 0;
     }
     .nav-menu {
         flex-direction: row;
@@ -2321,7 +2322,9 @@ input[type="range"]::-webkit-slider-thumb:hover {
         justify-content: center;
     }
     .main-content {
+        flex-grow: 1;
         height: auto;
+        overflow-y: auto;
         padding: 15px;
     }
     .metrics-grid {
