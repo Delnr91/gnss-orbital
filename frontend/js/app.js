@@ -1502,7 +1502,7 @@ document.querySelectorAll(".btn-preset").forEach(btn => {
 });
 
 // Language Select Change
-document.getElementById("lang-select").onchange = (e) => {
+function handleLanguageChange(e) {
     currentLang = e.target.value;
     updateLocalization();
     updatePlot();
@@ -1512,7 +1512,20 @@ document.getElementById("lang-select").onchange = (e) => {
     setAgentState(window.ApexOrb ? ApexOrb.getState() : "idle");
     const btnConst = document.getElementById("btn-constellation");
     if(btnConst) btnConst.onclick = toggleConstellation;
-};
+    
+    // Sync other select if present
+    const otherId = e.target.id === 'lang-select' ? 'lang-select-mobile' : 'lang-select';
+    const otherEl = document.getElementById(otherId);
+    if (otherEl && otherEl.value !== e.target.value) {
+        otherEl.value = e.target.value;
+    }
+}
+
+const mainLangSelect = document.getElementById("lang-select");
+if (mainLangSelect) mainLangSelect.addEventListener('change', handleLanguageChange);
+
+const mobileLangSelect = document.getElementById("lang-select-mobile");
+if (mobileLangSelect) mobileLangSelect.addEventListener('change', handleLanguageChange);
 
 // Chatbot Event Listeners
 document.getElementById("btn-chat-send").onclick = handleUserMessageSubmit;
