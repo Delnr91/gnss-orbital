@@ -1,147 +1,88 @@
-# Keplerian Orbital Dynamics & 3D Interactive Laboratory
-# Laboratorio Interactivo 3D y Dinámica Orbital Kepleriana
+# APEX-1 Space Agent & Orbital Dynamics Simulator 🚀🌌
 
-[![CI](https://github.com/Delnr91/gnss-orbital-py/actions/workflows/ci.yml/badge.svg)](https://github.com/Delnr91/gnss-orbital-py/actions/workflows/ci.yml)
-[![Deploy](https://github.com/Delnr91/gnss-orbital-py/actions/workflows/pages.yml/badge.svg)](https://github.com/Delnr91/gnss-orbital-py/actions/workflows/pages.yml)
-[![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![i18n](https://img.shields.io/badge/i18n-en%20%7C%20es%20%7C%20zh-orange.svg)](locales/)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![JavaScript](https://img.shields.io/badge/javascript-ES6%2B-yellow)
+![Three.js](https://img.shields.io/badge/three.js-WebGL-black)
 
-> **Live demo / Demo en vivo**: once pushed to GitHub with Pages enabled, the APEX-1 deck deploys automatically to `https://delnr91.github.io/gnss-orbital-py/` on every push to `main` (see `.github/workflows/pages.yml`).
-
-An open-source educational repository demonstrating Keplerian orbital mechanics, astrodynamics, design patterns, and internationalization (i18n) standards. Used for satellite systems modeling, including the European IRIS² constellation.
-
-Una biblioteca educativa de código abierto que demuestra la mecánica orbital kepleriana, la astrodinámica, los patrones de diseño y las prácticas de internacionalización. Diseñado para el modelado de sistemas satelitales, incluyendo la constelación europea IRIS².
+[🇺🇸 English](#english) | [🇪🇸 Español](#español) | [🇨🇳 中文](#中文)
 
 ---
 
-## 🚀 Key Features / Características Clave
+## <a name="english"></a> 🇺🇸 English
 
-### English
-- **Kepler Solver**: High-precision numerical Kepler equation solver ($M = E - e \sin E$) using the Newton-Raphson method.
-- **APEX-1 Living Core**: A GPU liquid-shader agent orb that listens, thinks and speaks — with a reactive frequency ring, live status protocol, and progressive "transmission" replies rendered with Markdown + KaTeX math.
-- **3D Mission Deck**: Three.js WebGL simulator with orbit presets (LEO/MEO/GEO/HEO), live classical-element sliders, tactical telemetry, and a multi-orbit constellation view.
-- **Research Console**: Jupyter launcher with notebook mission cards, automatic local-kernel detection, and embedded JupyterLab.
-- **Multilingual Support**: Real-time localization registry supporting English, Spanish, and Chinese (Simplified) — across both the Python library and the web deck.
-- **Interactive 3D Visualizations**: Interactive orbit plots utilizing Plotly and ipywidgets with a dark background theme and a semi-transparent Earth.
-- **IRIS² Multi-Orbital Modeling**: Study of LEO/MEO hybrid constellations to analyze latency, coverage, and modern New Space architectures.
-- **Software Design Patterns**: Clean implementation of Strategy, Template Method, Observer, Facade, and Registry design patterns.
-- **Gamified Progression**: Local achievement system to track student progress through notebook challenges.
+### Overview
+**APEX-1** is a high-performance, open-source astrodynamics software suite and WebGL simulator designed for the modern era of space exploration (Academy Deck 2050). It seamlessly integrates a Python backend for complex Keplerian mathematics with a highly responsive, glassmorphism-styled frontend.
 
-### Español
-- **Solucionador de Kepler**: Solucionador numérico de alta precisión para la ecuación de Kepler ($M = E - e \sin E$) mediante Newton-Raphson.
-- **Núcleo Viviente APEX-1**: Un orbe-agente líquido renderizado por shaders en GPU que escucha, piensa y habla — con anillo de frecuencias reactivo, protocolo de estado en vivo y respuestas en "transmisión" progresiva con Markdown + matemáticas KaTeX.
-- **Cubierta de Misión 3D**: Simulador WebGL con Three.js, órbitas predefinidas (LEO/MEO/GEO/HEO), deslizadores de elementos clásicos, telemetría táctica y vista de constelación multi-órbita.
-- **Consola de Investigación**: Lanzador de Jupyter con tarjetas de misión por cuaderno, detección automática del kernel local y JupyterLab integrado.
-- **Soporte Multilingüe**: Registro de localización en tiempo real con soporte para inglés, español y chino (simplificado) — tanto en la librería Python como en la web.
-- **Visualización 3D Interactiva**: Gráficas orbitales interactivas con Plotly e ipywidgets sobre fondo oscuro y una Tierra semitransparente.
-- **Modelado Multi-Orbital IRIS²**: Estudio de constelaciones híbridas LEO/MEO para analizar latencia, cobertura y arquitecturas modernas de New Space.
-- **Patrones de Diseño de Software**: Implementación clara de los patrones Strategy, Template Method, Observer, Facade y Registry.
-- **Gamificación Progresiva**: Sistema local de logros para realizar un seguimiento del progreso del estudiante en los cuadernos.
+It features an interactive **AI Space Agent** (APEX-1) equipped with a simulated "Liquid Frequency" digital core, providing real-time telemetry and orbital calculations using a multi-agent architectural pattern.
 
----
+### Features
+- **3D WebGL Simulator:** Real-time visualization of Low Earth Orbit (LEO), Medium Earth Orbit (MEO), Geostationary (GEO), and Highly Elliptical Orbits (HEO).
+- **Multi-Orbit View:** Visualize all constellations (ISS, GPS, Molniya) simultaneously.
+- **Space Agent AI:** Interactive holographic UI with dynamic frequency visualizer.
+- **Agent-First Architecture:** Built on a Builder/Operator multi-agent design pattern.
+- **Jupyter Lab Integration:** Ready for raw data-science and trajectory analysis.
 
-## 🛠️ Technology Stack & Architecture / Stack Tecnológico y Arquitectura
+### Deployment Architecture
+- **Frontend:** HTML/JS/CSS (Optimized for **Vercel** or Netlify).
+- **Backend:** Python / FastAPI / Uvicorn (Optimized for **Koyeb**, **Oracle Cloud Free Tier**, or **Render**).
 
-### Technology Stack
-- **Core**: Python 3.9+
-- **Math & Numeric**: NumPy
-- **Visuals & 3D**: Plotly
-- **Widgets & Interactivity**: ipywidgets, JupyterLab
-- **Testing**: pytest
+### ☕ Support the Project
+This project is fully open-source and free to use. It represents countless hours of innovation in aerospace UI/UX and orbital mechanics. If you want to support science, open-source innovation, or help cover the costs of keeping the backend servers alive 24/7, consider donating:
 
-### Architecture Layers / Capas de la Arquitectura
-The library follows a layered design to separate core physics, presentation, and infrastructure:
-
-1. **Domain Layer**: `kepler.py`, `orbits.py`, `constants.py`, `types.py`. Mathematical algorithms and physics rules.
-2. **Application Layer**: `i18n.py` (Registry pattern), `gamification.py` (Observer pattern).
-3. **Presentation Layer**: Jupyter Notebooks (`notebooks/`) and example CLI scripts (`examples/`).
-4. **Infrastructure Layer**: Translation files (`locales/*.json`) and achievements schema (`assets/badges/*.json`).
-
-For full details on design patterns, see [ARCHITECTURE.md](ARCHITECTURE.md) and [docs/design_patterns.md](docs/design_patterns.md).
+**USDT (TRC20 / Binance):** `[INSERT_YOUR_BINANCE_WALLET_ADDRESS_HERE]`
 
 ---
 
-## 📦 Installation / Instalación
+## <a name="español"></a> 🇪🇸 Español
 
-```bash
-# Clone the repository
-git clone https://github.com/your-username/gnss-orbital-py.git
-cd gnss-orbital-py
+### Descripción General
+**APEX-1** es una suite de software de astrodinámica y un simulador WebGL de alto rendimiento, diseñado con una estética futurista (Academy Deck 2050). Integra a la perfección un backend en Python para matemáticas keplerianas complejas con un frontend interactivo basado en *glassmorphism*.
 
-# Create a virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+Cuenta con un **Agente Espacial de IA interactivo** (APEX-1) equipado con un núcleo digital simulado de "Frecuencias Líquidas", proporcionando telemetría en tiempo real y cálculos orbitales utilizando un patrón arquitectónico multi-agente.
 
-# Install package in editable mode with development dependencies
-pip install -e .
-```
+### Características
+- **Simulador 3D WebGL:** Visualización en tiempo real de órbitas LEO, MEO, GEO y HEO (Molniya).
+- **Vista Multi-Órbita:** Visualiza todas las constelaciones simultáneamente.
+- **IA Espacial:** Interfaz holográfica interactiva con visualizador dinámico de frecuencias.
+- **Arquitectura Basada en Agentes:** Diseñado con un patrón de múltiples agentes (Constructor/Operador).
+- **Integración con Jupyter Lab:** Listo para ciencia de datos y análisis de trayectorias.
 
----
+### Arquitectura de Despliegue
+- **Frontend:** HTML/JS/CSS (Optimizado para **Vercel**).
+- **Backend:** Python / FastAPI (Recomendado: **Koyeb**, **Oracle Cloud Free Tier**, o VPS barato para mantenerlo en línea 24/7).
 
-## 🎮 Quick Start / Inicio Rápido
+### ☕ Apoya el Proyecto
+Este proyecto es de código abierto. Representa innumerables horas de innovación en UI/UX aeroespacial y mecánica orbital. Si deseas apoyar a la ciencia, a la innovación libre, o simplemente ayudar a pagar los servidores backend para que no se caigan a los 30 días, considera donar:
 
-### Run CLI Examples
-You can run the examples from the command line. Use the `--lang` flag to specify your language (`en`, `es`, `zh`):
-
-```bash
-# LEO Orbit propagation
-python examples/leo_orbit.py --lang es
-
-# Orbit Comparison (LEO, MEO, GEO, HEO)
-python examples/orbit_comparison.py --lang en
-```
-
-### Launch the APEX-1 Web Mission Deck
-The full experience — liquid agent core, 3D simulator, and embedded JupyterLab:
-
-```powershell
-pip install -r requirements.txt
-./scripts/start.ps1   # Windows: JupyterLab on :8888 + deck served at http://localhost:8000
-```
-
-Or serve the static deck alone (agent and simulator run fully in-browser):
-
-```bash
-python -m http.server 8000 --directory frontend
-```
-
-### Launch Jupyter Notebooks
-Open the interactive notebooks to study the orbits visually:
-
-```bash
-jupyter lab
-```
-
-Then navigate to:
-1. `notebooks/01_interactive_orbits.ipynb`: Visual study of classical orbital elements.
-2. `notebooks/02_kepler_equation.ipynb`: In-depth solver convergence analysis.
-3. `notebooks/03_iris2_constellation.ipynb`: Modeling the EU IRIS² multi-orbital constellation.
+**USDT (TRC20 / Binance):** `[INSERTA_TU_BILLETERA_BINANCE_AQUI]`
 
 ---
 
-## 🏆 Achievements / Sistema de Logros
+## <a name="中文"></a> 🇨🇳 中文
 
-This project includes a local gamification engine. When you complete challenges in the notebooks, achievements are unlocked and stored in `~/.gnss-orbital/progress.json`.
+### 概述
+**APEX-1** 是一款高性能的开源天体动力学软件套件和 WebGL 模拟器，专为现代太空探索时代（2050 学院甲板）设计。它将用于复杂开普勒数学的 Python 后端与高度响应的、基于毛玻璃美学（Glassmorphism）的前端无缝集成。
 
-- **Bronze: Orbit Explorer** - Successfully simulate a Low Earth Orbit.
-- **Bronze: Keplerian Apprentice** - Solve Kepler's equation numerically for the first time.
-- **Silver: Orbital Navigator** - Modify all 6 orbital elements and propagate the trajectory.
-- **Silver: Trajectory Analyst** - Compare LEO, MEO, GEO, and HEO orbits side-by-side.
-- **Gold: Space Pilot** - Design a Hohmann transfer orbit from LEO to GEO.
-- **Master: IRIS2 Constellation Designer** - Model the complete IRIS² hybrid constellation.
+它配备了一个交互式的**太空智能体 AI** (APEX-1)，该智能体拥有一个模拟的“液体频率”数字核心，并使用多智能体架构模式提供实时遥测和轨道计算。
+
+### 核心功能
+- **3D WebGL 模拟器：** 实时可视化近地轨道 (LEO)、中地球轨道 (MEO)、地球同步轨道 (GEO) 和大椭圆轨道 (HEO)。
+- **多轨道视图：** 同时可视化所有星座（ISS、GPS、Molniya）。
+- **太空智能体 AI：** 具有动态频率可视化器的交互式全息 UI。
+- **智能体优先架构：** 基于构建者/操作者多智能体设计模式构建。
+- **Jupyter Lab 集成：** 为原始数据科学和轨迹分析做好准备。
+
+### 部署架构
+- **前端 (Frontend):** HTML/JS/CSS（非常适合部署在 **Vercel**）。
+- **后端 (Backend):** Python / FastAPI（推荐：**Koyeb**, **Oracle Cloud Free Tier**, 或廉价 VPS 以保持 24/7 在线）。
+
+### ☕ 支持项目
+本项目完全开源免费。它代表了航空航天 UI/UX 和轨道力学领域无数小时的创新。如果您想支持科学、开源创新，或者帮助支付保持后端服务器 24/7 运行的费用，请考虑捐赠：
+
+**USDT (TRC20 / Binance):** `[在此处插入您的_BINANCE_钱包地址]`
 
 ---
 
-## 📚 References & Resources / Referencias y Recursos
-
-1. David A. Vallado, *Fundamentals of Astrodynamics and Applications*, 4th Edition.
-2. Howard D. Curtis, *Orbital Mechanics for Engineering Students*, Elsevier.
-3. European Commission, *IRIS²: Infrastructure for Resilience, Interconnection and Security by Satellite*.
-4. CDIO Initiative: *Standards 2.0* for engineering education training.
-
----
-
-## 📜 License / Licencia
-
-Distributed under the MIT License. See `LICENSE` for details.
+## License
+MIT License. See `LICENSE` file for details. Copyright (c) 2026.
