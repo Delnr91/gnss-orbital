@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "description": "APEX-1 Agent Network registry. The router scores the query against each sub-agent's keyword domain and dispatches to the best specialist. Each sub-agent only searches its own document shard (small, coherent context).",
+  "offtopic_threshold": 1.2,
+  "kb_files": [
+    "maneuvers_transfers.md",
+    "spacecraft_systems.md",
+    "space_environment.md",
+    "mission_operations.md"
+  ],
+  "agents": [
+    {
+      "id": "KEPLER",
+      "icon": "◉",
+      "color": "#6fd3e7",
+      "name": { "en": "Orbital Mechanics", "es": "Mecánica Orbital", "zh": "轨道力学" },
+      "keywords": ["kepler", "orbit", "orbita", "órbita", "轨道", "anomaly", "anomalia", "ellipse", "elipse", "period", "periodo", "周期", "vis-viva", "viva", "velocity", "velocidad", "速度", "energy", "energia", "能量", "newton", "gravity", "gravedad", "引力", "eccentricity", "excentricidad", "偏心率", "inclination", "inclinacion", "倾角", "raan", "semi-major", "semieje", "半长轴", "equation", "ecuacion", "方程", "leyes", "laws", "定律", "apogee", "apogeo", "远地点", "perigee", "perigeo", "近地点"],
+      "docs": ["orbital_calculations.md", "astronomy_fundamentals.md"]
+    },
+    {
+      "id": "GNSS",
+      "icon": "⌖",
+      "color": "#57c99b",
+      "name": { "en": "GNSS & Positioning", "es": "GNSS y Posicionamiento", "zh": "GNSS 与定位" },
+      "keywords": ["gnss", "gps", "galileo", "beidou", "glonass", "positioning", "posicionamiento", "定位", "clock", "reloj", "时钟", "relativity", "relatividad", "相对论", "precision", "precisión", "精度", "dop", "pseudorange", "pseudodistancia", "伪距", "carrier", "portadora", "载波", "ionosphere", "ionosfera", "电离层", "navigation", "navegacion", "导航", "signal", "señal", "信号"],
+      "docs": ["gnss_orbital_mechanics.md", "gnss_positioning_precision.md"]
+    },
+    {
+      "id": "PERTURB",
+      "icon": "≋",
+      "color": "#8d87d8",
+      "name": { "en": "Perturbations", "es": "Perturbaciones", "zh": "轨道摄动" },
+      "keywords": ["j2", "perturbation", "perturbacion", "perturbación", "摄动", "drag", "arrastre", "大气阻力", "oblateness", "achatamiento", "扁率", "srp", "radiation pressure", "presion de radiacion", "辐射压", "precession", "precesion", "进动", "nodal", "regression", "regresion", "sun-synchronous", "heliosincrona", "太阳同步", "molniya", "frozen", "congelada", "decay", "decaimiento", "衰减"],
+      "docs": ["orbital_perturbations.md", "space_environment.md"]
+    },
+    {
+      "id": "IRIS2",
+      "icon": "✦",
+      "color": "#f0b429",
+      "name": { "en": "New Space & IRIS²", "es": "New Space e IRIS²", "zh": "新太空与 IRIS²" },
+      "keywords": ["iris2", "iris", "constellation", "constelacion", "constelación", "星座", "starlink", "leo", "meo", "latency", "latencia", "延迟", "coverage", "cobertura", "覆盖", "new space", "europe", "europa", "欧洲", "eu", "broadband", "banda ancha", "宽带", "megaconstellation", "megaconstelacion", "巨型星座", "2030", "infrastructure", "infraestructura", "基础设施"],
+      "docs": ["space_infrastructure_2030.md"]
+    },
+    {
+      "id": "MISSION",
+      "icon": "➤",
+      "color": "#d97f5a",
+      "name": { "en": "Mission Design", "es": "Diseño de Misión", "zh": "任务设计" },
+      "keywords": ["hohmann", "霍曼", "transfer", "transferencia", "转移", "maneuver", "maniobra", "机动", "delta-v", "burn", "encendido", "点火", "plane change", "cambio de plano", "变轨", "launch", "lanzamiento", "发射", "window", "ventana", "窗口", "station-keeping", "mantenimiento", "位置保持", "rendezvous", "encuentro", "交会", "ground station", "estacion terrestre", "地面站", "tle", "tracking", "seguimiento", "跟踪", "operations", "operaciones", "运营"],
+      "docs": ["maneuvers_transfers.md", "mission_operations.md"]
+    },
+    {
+      "id": "SPACECRAFT",
+      "icon": "⬡",
+      "color": "#b9c4d0",
+      "name": { "en": "Spacecraft Systems", "es": "Sistemas de Satélite", "zh": "航天器系统" },
+      "keywords": ["satellite", "satelite", "satélite", "卫星", "bus", "payload", "carga util", "carga útil", "载荷", "solar panel", "panel solar", "太阳能板", "battery", "bateria", "batería", "电池", "antenna", "antena", "天线", "thermal", "termico", "térmico", "热控", "attitude", "actitud", "姿态", "adcs", "reaction wheel", "rueda de reaccion", "反作用轮", "propulsion", "propulsion", "propulsión", "推进", "thruster", "propulsor", "subsystem", "subsistema", "子系统"],
+      "docs": ["spacecraft_systems.md"]
+    }
+  ]
+}

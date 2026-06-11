@@ -40,6 +40,8 @@ from .kepler import (
 from .orbits import (
     PropagationStrategy,
     KeplerianPropagation,
+    J2Propagation,
+    j2_secular_rates,
     OrbitalPropagator,
     create_leo_orbit,
     create_meo_orbit,
@@ -103,6 +105,8 @@ __all__ = [
     # Orbits Definition & Propagation
     "PropagationStrategy",
     "KeplerianPropagation",
+    "J2Propagation",
+    "j2_secular_rates",
     "OrbitalPropagator",
     "create_leo_orbit",
     "create_meo_orbit",

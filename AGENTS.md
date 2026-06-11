@@ -2,6 +2,11 @@
 
 This document defines the agent roles, interfaces, and responsibilities for building and controlling the `gnss-orbital-py` astrodynamics software suite.
 
+> **Start here every session**: read [ENGRAM.md](ENGRAM.md) — the living project memory
+> with the build phases, non-negotiable principles, and prioritized backlog. The runtime
+> chat agent network (APEX-1's sub-agents) is documented in
+> [docs/agent_architecture.md](docs/agent_architecture.md).
+
 ---
 
 ## 1. Builder Agents (Software Construction)

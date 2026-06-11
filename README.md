@@ -1,6 +1,14 @@
 # Keplerian Orbital Dynamics & 3D Interactive Laboratory
 # Laboratorio Interactivo 3D y Dinámica Orbital Kepleriana
 
+[![CI](https://github.com/Delnr91/gnss-orbital-py/actions/workflows/ci.yml/badge.svg)](https://github.com/Delnr91/gnss-orbital-py/actions/workflows/ci.yml)
+[![Deploy](https://github.com/Delnr91/gnss-orbital-py/actions/workflows/pages.yml/badge.svg)](https://github.com/Delnr91/gnss-orbital-py/actions/workflows/pages.yml)
+[![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![i18n](https://img.shields.io/badge/i18n-en%20%7C%20es%20%7C%20zh-orange.svg)](locales/)
+
+> **Live demo / Demo en vivo**: once pushed to GitHub with Pages enabled, the APEX-1 deck deploys automatically to `https://delnr91.github.io/gnss-orbital-py/` on every push to `main` (see `.github/workflows/pages.yml`).
+
 An open-source educational repository demonstrating Keplerian orbital mechanics, astrodynamics, design patterns, and internationalization (i18n) standards. Used for satellite systems modeling, including the European IRIS² constellation.
 
 Una biblioteca educativa de código abierto que demuestra la mecánica orbital kepleriana, la astrodinámica, los patrones de diseño y las prácticas de internacionalización. Diseñado para el modelado de sistemas satelitales, incluyendo la constelación europea IRIS².

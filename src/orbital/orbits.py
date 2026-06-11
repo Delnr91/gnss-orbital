@@ -12,7 +12,7 @@ from typing import Tuple, Optional
 import numpy as np
 import numpy.typing as npt
 
-from .constants import MU_EARTH, EARTH_RADIUS
+from .constants import MU_EARTH, EARTH_RADIUS, J2_EARTH
 from .exceptions import SubsurfaceOrbitError
 from .i18n import Locale
 from .kepler import (
@@ -133,6 +133,109 @@ class KeplerianPropagation(PropagationStrategy):
         z = r31 * x_pqw + r32 * y_pqw
 
         return x, y, z
+
+
+def j2_secular_rates(
+    a: float,
+    e: float,
+    i_deg: float,
+    mu: float = MU_EARTH,
+    j2: float = J2_EARTH,
+    r_eq: float = EARTH_RADIUS,
+) -> Tuple[float, float, float]:
+    """Computes secular (average) drift rates caused by Earth's oblateness (J2).
+
+    The equatorial bulge torques the orbital plane, producing three slow
+    secular drifts (first-order theory, e.g. Vallado ch. 9):
+
+        dRAAN/dt = -3/2 * n * J2 * (Re/p)^2 * cos(i)
+        dargp/dt = +3/4 * n * J2 * (Re/p)^2 * (5*cos^2(i) - 1)
+        dM/dt    = +3/4 * n * J2 * (Re/p)^2 * sqrt(1-e^2) * (3*cos^2(i) - 1)
+
+    Args:
+        a: Semi-major axis in km.
+        e: Eccentricity (0 <= e < 1).
+        i_deg: Inclination in degrees.
+        mu: Gravitational parameter in km^3/s^2.
+        j2: Zonal harmonic coefficient.
+        r_eq: Planet equatorial radius in km.
+
+    Returns:
+        Tuple (raan_dot, argp_dot, mean_anomaly_dot_correction) in rad/s.
+    """
+    n = movimiento_medio(a, mu)
+    p = a * (1.0 - e**2)
+    i_rad = np.radians(i_deg)
+    cos_i = np.cos(i_rad)
+    factor = 1.5 * j2 * (r_eq / p) ** 2 * n
+
+    raan_dot = -factor * cos_i
+    argp_dot = 0.5 * factor * (5.0 * cos_i**2 - 1.0)
+    m_dot = 0.5 * factor * np.sqrt(1.0 - e**2) * (3.0 * cos_i**2 - 1.0)
+    return float(raan_dot), float(argp_dot), float(m_dot)
+
+
+class J2Propagation(PropagationStrategy):
+    """Keplerian propagation augmented with secular J2 perturbations.
+
+    The osculating ellipse keeps its shape (a, e, i constant) while RAAN,
+    argument of periapsis and mean anomaly drift at the analytic secular
+    rates. This reproduces the two showcase phenomena of Earth oblateness:
+    nodal regression (sun-synchronous orbits) and apsidal rotation
+    (frozen Molniya orbits at the critical inclination 63.43 deg).
+    """
+
+    def propagate(
+        self,
+        elements: OrbitalElements,
+        t_span: float,
+        num_points: int,
+        mu: float,
+    ) -> PropagationResult:
+        locale = Locale()
+        if t_span <= 0:
+            raise ValueError(locale.t("errors.t_span_positive", t_span=t_span))
+
+        e = elements.eccentricity
+        n = movimiento_medio(elements.semi_major_axis, mu)
+        raan_dot, argp_dot, m_dot = j2_secular_rates(
+            elements.semi_major_axis, e, elements.inclination, mu
+        )
+
+        # Initial mean anomaly from initial true anomaly
+        nu0_rad = np.radians(elements.true_anomaly)
+        E0 = 2.0 * np.arctan2(
+            np.sqrt(1.0 - e) * np.sin(nu0_rad / 2.0),
+            np.sqrt(1.0 + e) * np.cos(nu0_rad / 2.0),
+        )
+        M0 = E0 - e * np.sin(E0)
+
+        t = np.linspace(0.0, t_span, num_points)
+
+        # Drifting angles (vectorized over time)
+        M = M0 + (n + m_dot) * t
+        E = resolver_ecuacion_kepler(np.mod(M, _DOS_PI), e)
+        nu_rad = anomalia_verdadera_desde_excentrica(E, e)
+        raan_t = np.radians(elements.raan) + raan_dot * t
+        argp_t = np.radians(elements.argument_of_periapsis) + argp_dot * t
+        i_rad = np.radians(elements.inclination)
+
+        # In-plane position
+        p_orb = elements.semi_major_axis * (1.0 - e**2)
+        r = p_orb / (1.0 + e * np.cos(nu_rad))
+        x_pqw = r * np.cos(nu_rad)
+        y_pqw = r * np.sin(nu_rad)
+
+        # PQW -> ECI rotation with time-varying RAAN and argp
+        cos_O, sin_O = np.cos(raan_t), np.sin(raan_t)
+        cos_i, sin_i = np.cos(i_rad), np.sin(i_rad)
+        cos_w, sin_w = np.cos(argp_t), np.sin(argp_t)
+
+        x = (cos_O * cos_w - sin_O * sin_w * cos_i) * x_pqw + (-cos_O * sin_w - sin_O * cos_w * cos_i) * y_pqw
+        y = (sin_O * cos_w + cos_O * sin_w * cos_i) * x_pqw + (-sin_O * sin_w + cos_O * cos_w * cos_i) * y_pqw
+        z = (sin_w * sin_i) * x_pqw + (cos_w * sin_i) * y_pqw
+
+        return PropagationResult(x=x, y=y, z=z, time=t, elements=elements)
 
 
 class OrbitalPropagator:

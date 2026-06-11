@@ -23,13 +23,8 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Interactive 3D Parallax Background Canvas -->
+    <!-- Interactive 3D Deep-Space Background (stars + nebulae + shooting stars) -->
     <canvas id="bg-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; outline: none;"></canvas>
-
-    <!-- Looping Background Video from Veo/Runway -->
-    <video autoplay loop muted playsinline id="bg-video" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -3; opacity: 0.8;">
-        <source src="assets/video/background.mp4" type="video/mp4">
-    </video>
 
     <div id="labels-container" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10;"></div>
     <!-- Cybernetic Scanline Overlay for 2050 Hologram Feel -->
@@ -309,14 +304,12 @@
 
             <!-- TAB 2: SPACE AGENT (Living Liquid Core) -->
             <section id="tab-brain" class="tab-pane">
-                <div class="agent-stage">
-                    <!-- The Living Core: shader orb + frequency emission ring -->
+                <!-- Ambient layer: the living organism + its name breathe BEHIND the chat -->
+                <div class="agent-ambient">
                     <div id="orb-container" title="">
                         <canvas id="freq-canvas"></canvas>
                         <canvas id="orb-canvas"></canvas>
                     </div>
-
-                    <!-- Identity block: name letters + live status -->
                     <div class="agent-identity">
                         <h2 class="agent-name" aria-label="APEX-1">
                             <span>A</span><span>P</span><span>E</span><span>X</span><span class="agent-name-dash">—</span><span>1</span>
@@ -328,18 +321,16 @@
                     </div>
                 </div>
 
-                <div class="agent-chat">
-                    <!-- Messages Log -->
+                <!-- Full-screen chat overlay: translucent so the core glows through -->
+                <div class="agent-chat agent-chat-full">
                     <div class="chat-history" id="chat-messages">
                         <!-- Instantiated dynamically -->
                     </div>
 
-                    <!-- Suggestion Chips -->
                     <div class="suggestion-chips" id="suggestion-chips">
                         <!-- Populated via JS -->
                     </div>
 
-                    <!-- Input Bar -->
                     <div class="chat-input-bar">
                         <span class="input-prompt-symbol">❯</span>
                         <input type="text" id="chat-input" placeholder="Query APEX-1 (e.g. Hohmann, J2, GNSS)..." autocomplete="off">
@@ -389,9 +380,10 @@
         </main>
     </div>
     
-    <!-- Load Translations Base first, then the living core, then app logic -->
+    <!-- Load Translations Base first, then the living core, the agent network, then app logic -->
     <script src="documents.js"></script>
     <script src="js/orb.js"></script>
+    <script src="js/agents.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

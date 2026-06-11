@@ -63,6 +63,7 @@ const translations = {
         "agent.status.listening": "LISTENING",
         "agent.status.thinking": "PROCESSING QUERY",
         "agent.status.speaking": "TRANSMITTING",
+        "brain.routed": "ROUTED VIA",
         "jupyter.title": "Research Console",
         "jupyter.subtitle": "Interactive notebooks with the full Python astrodynamics engine.",
         "jupyter.status.checking": "SCANNING FOR LOCAL KERNEL…",
@@ -140,6 +141,7 @@ const translations = {
         "agent.status.listening": "ESCUCHANDO",
         "agent.status.thinking": "PROCESANDO CONSULTA",
         "agent.status.speaking": "TRANSMITIENDO",
+        "brain.routed": "ENRUTADO VÍA",
         "jupyter.title": "Consola de Investigación",
         "jupyter.subtitle": "Cuadernos interactivos con el motor de astrodinámica Python completo.",
         "jupyter.status.checking": "BUSCANDO KERNEL LOCAL…",
@@ -217,6 +219,7 @@ const translations = {
         "agent.status.listening": "正在聆听",
         "agent.status.thinking": "正在处理查询",
         "agent.status.speaking": "正在传输",
+        "brain.routed": "路由至",
         "jupyter.title": "研究控制台",
         "jupyter.subtitle": "交互式笔记本，内置完整的 Python 天体动力学引擎。",
         "jupyter.status.checking": "正在扫描本地内核…",
@@ -358,68 +361,185 @@ function getCartesianPosition(a, e, i_deg, raan_deg, argp_deg, nu) {
 }
 
 
-// --- 3. GLOBAL INTERACTIVE 3D BACKGROUND ---
+// --- 3. GLOBAL INTERACTIVE 3D DEEP-SPACE BACKGROUND ---
+// Three parallax star layers + procedural nebulae + occasional shooting stars.
+
+let bgStarLayers = [];
+let bgNebulae = [];
+let bgShootingStars = [];
+let bgLastShootingStar = 0;
+
+// Soft radial-gradient sprite texture used for nebula clouds
+function makeNebulaTexture(r, g, b) {
+    const size = 256;
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    const grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    grad.addColorStop(0.0, `rgba(${r}, ${g}, ${b}, 0.55)`);
+    grad.addColorStop(0.4, `rgba(${r}, ${g}, ${b}, 0.18)`);
+    grad.addColorStop(1.0, "rgba(0, 0, 0, 0)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, size, size);
+    return new THREE.CanvasTexture(canvas);
+}
 
 function initBackgroundThreeJS() {
     const canvas = document.getElementById("bg-canvas");
     if (!canvas) return;
-    
+
     bgScene = new THREE.Scene();
-    
+
     bgCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
     bgCamera.position.z = 1000;
-    
+
     bgRenderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
     bgRenderer.setSize(window.innerWidth, window.innerHeight);
-    bgRenderer.setPixelRatio(window.devicePixelRatio || 1);
-    
-    // Create floating cosmic particle grid
-    const starsGeo = new THREE.BufferGeometry();
-    const count = 500;
-    const positions = new Float32Array(count * 3);
-    
-    for (let k = 0; k < count * 3; k++) {
-        positions[k] = (Math.random() - 0.5) * 2500;
-    }
-    
-    starsGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    
-    // Additive blending neon blue dust points
-    const starsMat = new THREE.PointsMaterial({
-        color: 0xaaaaaa,
-        size: 3.5,
-        transparent: true,
-        opacity: 0.35,
-        blending: THREE.AdditiveBlending
+    bgRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+    // Three star layers at different depths: far dust, mid field, near bright stars
+    const layerSpecs = [
+        { count: 700, spread: 3200, size: 1.6, color: 0x8fa8c0, opacity: 0.45, drift: 0.00012 },
+        { count: 350, spread: 2400, size: 3.0, color: 0xbfd9e8, opacity: 0.55, drift: 0.00028 },
+        { count: 120, spread: 1700, size: 5.0, color: 0xeaf6ff, opacity: 0.85, drift: 0.0005 }
+    ];
+    bgStarLayers = layerSpecs.map((spec) => {
+        const geo = new THREE.BufferGeometry();
+        const pos = new Float32Array(spec.count * 3);
+        for (let k = 0; k < spec.count * 3; k++) pos[k] = (Math.random() - 0.5) * spec.spread;
+        geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+        const mat = new THREE.PointsMaterial({
+            color: spec.color,
+            size: spec.size,
+            transparent: true,
+            opacity: spec.opacity,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+        });
+        const points = new THREE.Points(geo, mat);
+        points.userData = { drift: spec.drift, baseOpacity: spec.opacity, phase: Math.random() * Math.PI * 2 };
+        bgScene.add(points);
+        return points;
     });
-    
-    bgStars = new THREE.Points(starsGeo, starsMat);
-    bgScene.add(bgStars);
-    
+
+    // Procedural nebula clouds drifting in the far field
+    const nebulaPalette = [
+        [40, 90, 140], [60, 140, 160], [90, 70, 150], [30, 110, 120]
+    ];
+    bgNebulae = [];
+    for (let i = 0; i < 7; i++) {
+        const c = nebulaPalette[i % nebulaPalette.length];
+        const tex = makeNebulaTexture(c[0], c[1], c[2]);
+        const mat = new THREE.SpriteMaterial({
+            map: tex,
+            transparent: true,
+            opacity: 0.4 + Math.random() * 0.25,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+        });
+        const sprite = new THREE.Sprite(mat);
+        const scale = 900 + Math.random() * 1400;
+        sprite.scale.set(scale, scale, 1);
+        sprite.position.set(
+            (Math.random() - 0.5) * 2600,
+            (Math.random() - 0.5) * 1600,
+            -800 - Math.random() * 1500
+        );
+        sprite.userData = {
+            vx: (Math.random() - 0.5) * 0.12,
+            vy: (Math.random() - 0.5) * 0.06,
+            pulse: Math.random() * Math.PI * 2
+        };
+        bgScene.add(sprite);
+        bgNebulae.push(sprite);
+    }
+
     // Track mouse movement for magnetic parallax effect
-    window.addEventListener('mousemove', (e) => {
+    window.addEventListener("mousemove", (e) => {
         mouseX = (e.clientX - window.innerWidth / 2) * 0.22;
         mouseY = (e.clientY - window.innerHeight / 2) * 0.22;
     });
-    
+
+    window.addEventListener("resize", () => {
+        bgCamera.aspect = window.innerWidth / window.innerHeight;
+        bgCamera.updateProjectionMatrix();
+        bgRenderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
     animateBackground();
+}
+
+function spawnShootingStar() {
+    const points = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(-90, 14, 0)];
+    const geo = new THREE.BufferGeometry().setFromPoints(points);
+    const mat = new THREE.LineBasicMaterial({
+        color: 0xdef4ff,
+        transparent: true,
+        opacity: 0.9,
+        blending: THREE.AdditiveBlending
+    });
+    const line = new THREE.Line(geo, mat);
+    line.position.set(
+        400 + Math.random() * 900,
+        300 + Math.random() * 500,
+        -200 - Math.random() * 400
+    );
+    line.userData = {
+        vx: -(7 + Math.random() * 6),
+        vy: -(1 + Math.random() * 2.5),
+        life: 1.0
+    };
+    bgScene.add(line);
+    bgShootingStars.push(line);
 }
 
 function animateBackground() {
     requestAnimationFrame(animateBackground);
-    
-    if (bgStars) {
-        bgStars.rotation.y += 0.0004;
-        bgStars.rotation.x += 0.0001;
+    const now = performance.now();
+    const t = now / 1000;
+
+    // Star layers: slow counter-rotations + gentle twinkle per layer
+    bgStarLayers.forEach((layer, idx) => {
+        layer.rotation.y += layer.userData.drift * (idx % 2 === 0 ? 1 : -1);
+        layer.rotation.x += layer.userData.drift * 0.3;
+        layer.material.opacity = layer.userData.baseOpacity * (0.82 + 0.18 * Math.sin(t * 1.7 + layer.userData.phase));
+    });
+
+    // Nebulae drift and breathe
+    bgNebulae.forEach((n) => {
+        n.position.x += n.userData.vx;
+        n.position.y += n.userData.vy;
+        if (Math.abs(n.position.x) > 1600) n.userData.vx *= -1;
+        if (Math.abs(n.position.y) > 1000) n.userData.vy *= -1;
+        n.material.opacity = 0.32 + 0.18 * Math.sin(t * 0.25 + n.userData.pulse);
+    });
+
+    // Occasional shooting star (every 4-9 seconds)
+    if (now - bgLastShootingStar > 4000 + Math.random() * 5000) {
+        bgLastShootingStar = now;
+        spawnShootingStar();
     }
-    
+    for (let i = bgShootingStars.length - 1; i >= 0; i--) {
+        const s = bgShootingStars[i];
+        s.position.x += s.userData.vx;
+        s.position.y += s.userData.vy;
+        s.userData.life -= 0.012;
+        s.material.opacity = Math.max(0, s.userData.life);
+        if (s.userData.life <= 0) {
+            bgScene.remove(s);
+            s.geometry.dispose();
+            s.material.dispose();
+            bgShootingStars.splice(i, 1);
+        }
+    }
+
     // Interpolate camera to mouse position (Dampened Parallax)
     if (bgCamera) {
         bgCamera.position.x += (mouseX - bgCamera.position.x) * 0.05;
         bgCamera.position.y += (-mouseY - bgCamera.position.y) * 0.05;
         bgCamera.lookAt(bgScene.position);
     }
-    
+
     if (bgRenderer && bgScene && bgCamera) {
         bgRenderer.render(bgScene, bgCamera);
     }
@@ -427,6 +547,94 @@ function animateBackground() {
 
 
 // --- 4. THREE.JS WEBGL SIMULATION (WITH REAL GLOBE TEXTURE) ---
+
+// Solar-cell grid texture for the panels (procedural, no asset needed)
+function makeSolarPanelTexture() {
+    const canvas = document.createElement("canvas");
+    canvas.width = 128; canvas.height = 64;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#0d2050";
+    ctx.fillRect(0, 0, 128, 64);
+    ctx.strokeStyle = "#2a4a9a";
+    ctx.lineWidth = 1.5;
+    for (let x = 0; x <= 128; x += 16) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 64); ctx.stroke(); }
+    for (let y = 0; y <= 64; y += 16) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(128, y); ctx.stroke(); }
+    // Specular cell sheen
+    const grad = ctx.createLinearGradient(0, 0, 128, 64);
+    grad.addColorStop(0, "rgba(120, 170, 255, 0.20)");
+    grad.addColorStop(0.5, "rgba(120, 170, 255, 0.02)");
+    grad.addColorStop(1, "rgba(120, 170, 255, 0.15)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 128, 64);
+    return new THREE.CanvasTexture(canvas);
+}
+
+// NASA-style procedural satellite: gold-foil bus, gridded solar wings,
+// Earth-pointing comm dish, and a blinking beacon.
+function createSatelliteModel(scale) {
+    const s = scale || 1.0;
+    const group = new THREE.Group();
+
+    // Gold multilayer-insulation bus
+    const bus = new THREE.Mesh(
+        new THREE.BoxGeometry(330 * s, 330 * s, 330 * s),
+        new THREE.MeshStandardMaterial({
+            color: 0xc9921e, metalness: 0.85, roughness: 0.38,
+            emissive: 0x2a1d05, emissiveIntensity: 0.6
+        })
+    );
+    group.add(bus);
+
+    // Radiator plate (white) on one face
+    const radiator = new THREE.Mesh(
+        new THREE.BoxGeometry(300 * s, 300 * s, 8 * s),
+        new THREE.MeshStandardMaterial({ color: 0xe8edf2, metalness: 0.1, roughness: 0.7 })
+    );
+    radiator.position.z = -172 * s;
+    group.add(radiator);
+
+    // Solar wings with cell-grid texture
+    const panelTex = makeSolarPanelTexture();
+    const panelMat = new THREE.MeshStandardMaterial({
+        map: panelTex, color: 0xffffff, metalness: 0.35, roughness: 0.45,
+        emissive: 0x0a1f4d, emissiveIntensity: 0.5, side: THREE.DoubleSide
+    });
+    const armMat = new THREE.MeshStandardMaterial({ color: 0x9aa4ae, metalness: 0.7, roughness: 0.4 });
+    [-1, 1].forEach((dir) => {
+        const arm = new THREE.Mesh(new THREE.CylinderGeometry(14 * s, 14 * s, 240 * s, 8), armMat);
+        arm.rotation.z = Math.PI / 2;
+        arm.position.x = dir * 280 * s;
+        group.add(arm);
+
+        const wing = new THREE.Mesh(new THREE.BoxGeometry(1050 * s, 8 * s, 330 * s), panelMat);
+        wing.position.x = dir * (400 + 525) * s * 0.85;
+        group.add(wing);
+    });
+
+    // Earth-pointing high-gain dish on +Z (group.lookAt(Earth) aims it)
+    const dish = new THREE.Mesh(
+        new THREE.SphereGeometry(130 * s, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2),
+        new THREE.MeshStandardMaterial({ color: 0xf2f5f8, metalness: 0.25, roughness: 0.5, side: THREE.DoubleSide })
+    );
+    dish.rotation.x = -Math.PI / 2;
+    dish.position.z = 245 * s;
+    group.add(dish);
+    const boom = new THREE.Mesh(new THREE.CylinderGeometry(10 * s, 10 * s, 90 * s, 8), armMat);
+    boom.rotation.x = Math.PI / 2;
+    boom.position.z = 190 * s;
+    group.add(boom);
+
+    // Blinking navigation beacon
+    const beaconMat = new THREE.MeshStandardMaterial({
+        color: 0xff4444, emissive: 0xff2222, emissiveIntensity: 1.5
+    });
+    const beacon = new THREE.Mesh(new THREE.SphereGeometry(26 * s, 12, 12), beaconMat);
+    beacon.position.y = 195 * s;
+    group.add(beacon);
+    group.userData.beaconMat = beaconMat;
+
+    return group;
+}
 
 function initThreeJS() {
     const container = document.getElementById("canvas-container");
@@ -627,36 +835,7 @@ function initThreeJS() {
     commBeam = new THREE.Line(beamGeo, beamMat);
     scene.add(commBeam);
     
-    // Satellite Model Construction (NASA Gold bus with blue solar panels)
-    const satGroup = new THREE.Group();
-    
-    // Central Bus body
-    const busGeo = new THREE.BoxGeometry(350, 350, 350);
-    const busMat = new THREE.MeshPhongMaterial({
-        color: 0xdddddd,
-        emissive: 0x222222,
-        shininess: 30
-    });
-    const bus = new THREE.Mesh(busGeo, busMat);
-    satGroup.add(bus);
-    
-    // Left Solar Panel
-    const wingGeo = new THREE.BoxGeometry(1000, 30, 240);
-    const wingMat = new THREE.MeshPhongMaterial({
-        color: 0x444444,
-        emissive: 0x111111,
-        shininess: 20
-    });
-    const wingLeft = new THREE.Mesh(wingGeo, wingMat);
-    wingLeft.position.x = 750;
-    satGroup.add(wingLeft);
-    
-    // Right Solar Panel
-    const wingRight = new THREE.Mesh(wingGeo, wingMat);
-    wingRight.position.x = -750;
-    satGroup.add(wingRight);
-    
-    satelliteMesh = satGroup;
+    satelliteMesh = createSatelliteModel(1.0);
     scene.add(satelliteMesh);
     
     // Setup window resize listener
@@ -704,9 +883,11 @@ function animate() {
         const pos = getCartesianPosition(orbitalParams.a, orbitalParams.e, orbitalParams.i, orbitalParams.raan, orbitalParams.argp, nu);
         satelliteMesh.position.set(pos.x, pos.y, pos.z);
         
-        // Spin satellite on its axis for telemetry effect
-        satelliteMesh.rotation.y += 0.005;
-        satelliteMesh.rotation.z += 0.002;
+        // Keep the high-gain dish locked on Earth, pulse the beacon
+        satelliteMesh.lookAt(0, 0, 0);
+        if (satelliteMesh.userData.beaconMat) {
+            satelliteMesh.userData.beaconMat.emissiveIntensity = 1.0 + Math.sin(performance.now() / 280) * 0.9;
+        }
         
         // Draw the communication beam connection from satellite to Earth
         if (commBeam) {
@@ -734,31 +915,30 @@ function animate() {
     }
     
     // Propagate Tactical Constellation
-    if (isConstellationMode && constellationGroup) {
+    if (isConstellationMode && constellationGroup.length && renderer) {
         const timeFactor = 0.02; // Global constellation time speed
-        
-        const canvasContainer = document.getElementById("canvas-container");
-        const hw = canvasContainer.clientWidth / 2;
-        const hh = canvasContainer.clientHeight / 2;
-        
+
+        // Project labels against the actual WebGL canvas position on screen
+        const rect = renderer.domElement.getBoundingClientRect();
+
         constellationGroup.forEach(c => {
             const periodSec = 2 * Math.PI * Math.sqrt(Math.pow(c.data.a, 3) / MU_EARTH);
             c.nu += (timeFactor * 3600) / periodSec; // Advance true anomaly
-            
+
             // Get Cartesian Position
             const pos = getCartesianPosition(c.data.a, c.data.e, c.data.i, c.data.raan, c.data.argp, c.nu);
             c.mesh.position.set(pos.x, pos.y, pos.z);
-            
-            // 2D Label Projection
+
+            // 2D Label Projection (canvas-rect aware)
             const vector = new THREE.Vector3(pos.x, pos.y, pos.z);
             vector.project(camera);
-            
-            if (vector.z < 1.0) { // If in front of camera
+
+            if (vector.z < 1.0) {
                 c.labelEl.style.display = 'block';
-                const x = (vector.x * hw) + hw;
-                const y = -(vector.y * hh) + hh;
+                const x = rect.left + (vector.x * 0.5 + 0.5) * rect.width;
+                const y = rect.top + (-vector.y * 0.5 + 0.5) * rect.height;
                 c.labelEl.style.left = `${x}px`;
-                c.labelEl.style.top = `${y - 15}px`; // Slightly above satellite
+                c.labelEl.style.top = `${y - 16}px`;
             } else {
                 c.labelEl.style.display = 'none'; // Behind camera
             }
@@ -806,16 +986,32 @@ function updateThreeJSOrbit(a, e, i, raan, argp) {
 function querySecondBrainAgent(userInput) {
     const query = userInput.toLowerCase().trim();
     if (!query) return null;
-    
-    // Anti-troll filter validation
+
+    // Stage 1 — guard: reject queries outside the space domain
     const isRelated = spaceKeywords.some(keyword => query.includes(keyword));
     if (!isRelated) {
         return {
             text: translations[currentLang]["teacher.offtopic"],
-            doc: null
+            doc: null,
+            agent: null
         };
     }
-    
+
+    // Stage 2 — router: dispatch to the best specialist sub-agent shard
+    let routedAgent = null;
+    if (window.AgentNetwork && AgentNetwork.isReady()) {
+        const routed = AgentNetwork.route(query, currentLang);
+        if (routed && routed.section) {
+            return {
+                text: routed.section,
+                doc: routed.doc,
+                agent: routed.agent
+            };
+        }
+        if (routed && routed.agent) routedAgent = routed.agent; // weak shard: keep tag, escalate
+    }
+
+    // Stage 3 — fallback: flat search across the whole vault
     const docs = vaultDocuments[currentLang];
     let bestSection = null;
     let bestScore = 0;
@@ -863,12 +1059,14 @@ function querySecondBrainAgent(userInput) {
     if (bestScore > 1.2 && bestSection) {
         return {
             text: bestSection,
-            doc: sourceDoc
+            doc: sourceDoc,
+            agent: routedAgent
         };
     } else {
         return {
             text: translations[currentLang]["teacher.no_match"],
-            doc: null
+            doc: null,
+            agent: null
         };
     }
 }
@@ -980,12 +1178,24 @@ function renderRichContent(el, text) {
     el.innerHTML = html;
 }
 
-// Reveal a bot reply block-by-block while the core "transmits"
-function revealBotMessage(text, isMarkdown, onDone) {
+// Reveal a bot reply block-by-block while the core "transmits".
+// When a sub-agent answered, a routing tag credits the specialist.
+function revealBotMessage(text, isMarkdown, onDone, agent) {
     const bubble = appendChatBubble("bot", "");
     if (!bubble) { if (onDone) onDone(); return; }
     const content = bubble.querySelector(".bubble-content");
     const messagesContainer = document.getElementById("chat-messages");
+
+    if (agent) {
+        const tag = document.createElement("div");
+        tag.className = "route-tag";
+        tag.style.setProperty("--agent-color", agent.color || "#6fd3e7");
+        const agentName = (agent.name && (agent.name[currentLang] || agent.name.en)) || agent.id;
+        tag.innerHTML = `<span class="route-icon">${agent.icon || "◈"}</span>` +
+            `<span>${translations[currentLang]["brain.routed"] || "ROUTED VIA"}</span>` +
+            `<strong>${agent.id} · ${agentName}</strong>`;
+        messagesContainer.insertBefore(tag, bubble);
+    }
 
     if (isMarkdown) {
         renderRichContent(content, text);
@@ -1046,12 +1256,14 @@ function handleUserMessageSubmit() {
         if (response.doc) {
             const intro = translations[currentLang]["teacher.reply_intro"].replace("{document}", response.doc);
             fullReplyText = `${intro}\n\n---\n\n${response.text}`;
+            // A successful find makes the core visibly happy
+            if (window.ApexOrb && ApexOrb.emote) ApexOrb.emote("happy");
         } else {
             fullReplyText = response.text;
         }
 
         setAgentState("speaking");
-        revealBotMessage(fullReplyText, true, () => setAgentState("idle"));
+        revealBotMessage(fullReplyText, true, () => setAgentState("idle"), response.agent);
     }, 900);
 }
 
@@ -1133,17 +1345,17 @@ document.querySelectorAll(".nav-item").forEach(btn => {
         const tab = btn.getAttribute("data-tab");
         document.getElementById(`tab-${tab}`).classList.add("active");
         
-        const bgVideo = document.getElementById("bg-video");
+        const bgCanvas = document.getElementById("bg-canvas");
         const canvasContainer = document.getElementById("canvas-container");
 
         if (tab === "brain") {
             // Dim ambient layers so the living core owns the stage
-            if (bgVideo) bgVideo.style.opacity = "0.25";
+            if (bgCanvas) bgCanvas.style.opacity = "0.35";
             if (canvasContainer) canvasContainer.style.opacity = "0";
             // The orb initialized while hidden (0x0): re-measure now that it is visible
             if (window.ApexOrb) setTimeout(() => ApexOrb.resize(), 60);
         } else {
-            if (bgVideo) bgVideo.style.opacity = "1";
+            if (bgCanvas) bgCanvas.style.opacity = "1";
             if (canvasContainer) canvasContainer.style.opacity = "1";
         }
 
@@ -1265,6 +1477,7 @@ window.onload = () => {
     if(btnConst) btnConst.onclick = toggleConstellation;
     initBackgroundThreeJS();
     if (window.ApexOrb) ApexOrb.init("orb-container");
+    if (window.AgentNetwork) AgentNetwork.init();
     initThreeJS();
     initJupyterConsole();
     updatePlot();
@@ -1272,77 +1485,89 @@ window.onload = () => {
 };
 
 
+function clearConstellation() {
+    constellationGroup.forEach(c => {
+        scene.remove(c.mesh);
+        scene.remove(c.line);
+        c.mesh.geometry.dispose();
+        c.mesh.material.dispose();
+        c.line.geometry.dispose();
+        c.line.material.dispose();
+    });
+    constellationGroup = [];
+}
+
 function toggleConstellation() {
     isConstellationMode = !isConstellationMode;
-    const container = document.getElementById("labels-container");
-    container.innerHTML = "";
-    
+    const labelsContainer = document.getElementById("labels-container");
+    labelsContainer.innerHTML = "";
+
+    const controlsCard = document.querySelector(".controls-card");
+    const btn = document.getElementById("btn-constellation");
+
     if (isConstellationMode) {
-        // Hide single orbit controls & mesh
-        satelliteMesh.visible = false;
-        orbitLine.visible = false;
-        if(commBeam) commBeam.visible = false;
-        document.getElementById("orbital-controls").style.opacity = "0.2";
-        document.getElementById("btn-constellation").innerText = "◈ DISABLE CONSTELLATION";
-        
-        // Zoom out camera to see GEO orbits (42,000 km)
+        // Hide the single-orbit actors
+        if (satelliteMesh) satelliteMesh.visible = false;
+        if (orbitLine) orbitLine.visible = false;
+        if (commBeam) commBeam.visible = false;
+        if (controlsCard) controlsCard.style.opacity = "0.25";
+        if (btn) btn.innerText = "◈ EXIT MULTI-ORBIT";
+
+        // Reference constellation: one of each orbital regime, color-coded
+        const sats = [
+            { name: "ISS (LEO)",  a: EARTH_RADIUS + 420,   e: 0.0006, i: 51.6,  argp: 0,   raan: 0,   color: 0xeaf6ff },
+            { name: "STARLINK-1", a: EARTH_RADIUS + 550,   e: 0.0001, i: 53.0,  argp: 0,   raan: 45,  color: 0x8fb8d8 },
+            { name: "STARLINK-2", a: EARTH_RADIUS + 550,   e: 0.0001, i: 53.0,  argp: 0,   raan: 105, color: 0x8fb8d8 },
+            { name: "GPS-III",    a: EARTH_RADIUS + 20200, e: 0.01,   i: 55.0,  argp: 0,   raan: 0,   color: 0x57c99b },
+            { name: "GPS-III-B",  a: EARTH_RADIUS + 20200, e: 0.01,   i: 55.0,  argp: 0,   raan: 120, color: 0x57c99b },
+            { name: "GALILEO",    a: EARTH_RADIUS + 23222, e: 0.0001, i: 56.0,  argp: 0,   raan: 200, color: 0xf0b429 },
+            { name: "BEIDOU-3",   a: EARTH_RADIUS + 21528, e: 0.005,  i: 55.0,  argp: 0,   raan: 280, color: 0xd97f5a },
+            { name: "GEO-COM",    a: 42164,                e: 0.0001, i: 0.01,  argp: 0,   raan: 0,   color: 0xff6b6b },
+            { name: "MOLNIYA",    a: 26561,                e: 0.74,   i: 63.4,  argp: 270, raan: 45,  color: 0x8d87d8 }
+        ];
+
+        // Frame the whole system: pull the camera out past the largest apogee
+        const maxApogee = Math.max(...sats.map(s => s.a * (1 + s.e)));
         if (camera && controls) {
-            camera.position.set(80000, 50000, 80000);
+            const d = maxApogee * 1.15;
+            camera.position.set(d * 0.85, d * 0.5, d * 0.85);
             controls.update();
         }
 
-        // Build Constellation Data
-        const sats = [
-            { name: "ISS (LEO)", a: EARTH_RADIUS + 400, e: 0.0006, i: 51.6, argp: 0, raan: 0, color: 0xffffff },
-            { name: "STARLINK-1", a: EARTH_RADIUS + 550, e: 0.0001, i: 53.0, argp: 0, raan: 45, color: 0xaaaaaa },
-            { name: "STARLINK-2", a: EARTH_RADIUS + 550, e: 0.0001, i: 53.0, argp: 0, raan: 90, color: 0xaaaaaa },
-            { name: "GPS-IIR-1", a: EARTH_RADIUS + 20200, e: 0.01, i: 55.0, argp: 0, raan: 0, color: 0x00ffcc },
-            { name: "GPS-IIR-2", a: EARTH_RADIUS + 20200, e: 0.01, i: 55.0, argp: 120, raan: 0, color: 0x00ffcc },
-            { name: "GPS-IIR-3", a: EARTH_RADIUS + 20200, e: 0.01, i: 55.0, argp: 240, raan: 0, color: 0x00ffcc },
-            { name: "GALILEO-1", a: EARTH_RADIUS + 23222, e: 0.0001, i: 56.0, argp: 0, raan: 120, color: 0xffaa00 },
-            { name: "GEO-SAT-1", a: 42164, e: 0.0001, i: 0.01, argp: 0, raan: 0, color: 0xff5555 },
-            { name: "MOLNIYA-1", a: 26561, e: 0.74, i: 63.4, argp: 270, raan: 45, color: 0x5555ff }
-        ];
-        
-        constellationGroup.forEach(c => {
-            scene.remove(c.mesh);
-            scene.remove(c.line);
-        });
-        constellationGroup = [];
-        
+        clearConstellation();
+
         sats.forEach(s => {
-            // Mesh
-            const satGeo = new THREE.BoxGeometry(600, 600, 600); // Larger for visibility
-            const satMat = new THREE.MeshPhongMaterial({ color: s.color, emissive: s.color, shininess: 100 });
-            const mesh = new THREE.Mesh(satGeo, satMat);
+            // Glowing marker sphere (reads as a satellite at any zoom)
+            const mesh = new THREE.Mesh(
+                new THREE.SphereGeometry(520, 16, 16),
+                new THREE.MeshBasicMaterial({ color: s.color })
+            );
             scene.add(mesh);
-            
-            // Orbit Line
+
+            // Orbit line traced with the SAME transform as the satellite itself,
+            // so line and marker can never disagree (the old rotation.set bug)
             const points = [];
-            for (let theta = 0; theta <= Math.PI * 2; theta += 0.05) {
-                const r = (s.a * (1 - s.e*s.e)) / (1 + s.e * Math.cos(theta));
-                const x = r * Math.cos(theta);
-                const y = r * Math.sin(theta);
-                points.push(new THREE.Vector3(x, y, 0));
+            const N = 256;
+            for (let k = 0; k <= N; k++) {
+                const nu = (k / N) * Math.PI * 2;
+                const p = getCartesianPosition(s.a, s.e, s.i, s.raan, s.argp, nu);
+                points.push(new THREE.Vector3(p.x, p.y, p.z));
             }
-            const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
-            const lineMat = new THREE.LineBasicMaterial({ color: s.color, transparent: false, opacity: 1.0 });
-            const line = new THREE.Line(lineGeo, lineMat);
-            
-            // Rotate orbit line by i, raan, argp
-            const i_rad = s.i * Math.PI / 180;
-            const raan_rad = s.raan * Math.PI / 180;
-            const argp_rad = s.argp * Math.PI / 180;
-            line.rotation.set(i_rad, raan_rad, argp_rad, 'ZYX');
+            const line = new THREE.Line(
+                new THREE.BufferGeometry().setFromPoints(points),
+                new THREE.LineBasicMaterial({ color: s.color, transparent: true, opacity: 0.75 })
+            );
             scene.add(line);
-            
-            // HTML Label
+
+            // Floating name label, tinted like its orbit
             const label = document.createElement('div');
             label.className = 'satellite-label';
             label.innerText = s.name;
-            container.appendChild(label);
-            
-            // Save state
+            const css = '#' + s.color.toString(16).padStart(6, '0');
+            label.style.color = css;
+            label.style.borderColor = css;
+            labelsContainer.appendChild(label);
+
             constellationGroup.push({
                 data: s,
                 mesh: mesh,
@@ -1351,20 +1576,17 @@ function toggleConstellation() {
                 nu: Math.random() * Math.PI * 2 // random starting anomaly
             });
         });
-        
+
     } else {
         // Restore single mode
-        satelliteMesh.visible = true;
-        orbitLine.visible = true;
-        if(commBeam) commBeam.visible = true;
-        document.getElementById("orbital-controls").style.opacity = "1";
-        document.getElementById("btn-constellation").innerText = "◈ TACTICAL CONSTELLATION";
-        
-        constellationGroup.forEach(c => {
-            scene.remove(c.mesh);
-            scene.remove(c.line);
-        });
-        constellationGroup = [];
+        if (satelliteMesh) satelliteMesh.visible = true;
+        if (orbitLine) orbitLine.visible = true;
+        if (commBeam) commBeam.visible = true;
+        if (controlsCard) controlsCard.style.opacity = "1";
+        if (btn) btn.innerText = translations[currentLang]["ctrl.constellation"] || "◈ MULTI-ORBIT VIEW";
+
+        clearConstellation();
+        updatePlot();
     }
 }
 

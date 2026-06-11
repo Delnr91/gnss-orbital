@@ -149,6 +149,8 @@
     };
 
     let currentState = "idle";
+    let emotion = null;          // active emotion overlay (e.g. "happy")
+    let emotionStart = 0;
     let scene, camera, renderer, orbMesh, haloMesh, uniforms, haloUniforms;
     let freqCanvas, freqCtx;
     let container;
@@ -274,6 +276,17 @@
         live.amplitude = Math.min(live.amplitude + 0.18, 0.65);
     }
 
+    // Emotion overlay: a short, expressive performance on top of the current state.
+    // "happy" = damped joy-bounce (squash & stretch), golden bloom, triple ripple burst.
+    function emote(name) {
+        if (name !== "happy") return;
+        emotion = "happy";
+        emotionStart = performance.now();
+        pulses.push({ r: 0, alpha: 0.9 });
+        setTimeout(() => pulses.push({ r: 0, alpha: 0.75 }), 160);
+        setTimeout(() => pulses.push({ r: 0, alpha: 0.6 }), 340);
+    }
+
     function loop(ts) {
         if (!initialized) return;
         requestAnimationFrame(loop);
@@ -302,17 +315,48 @@
             speakBoost = voiceEnvelope(ts / 1000) * 0.22;
         }
 
+        // Emotion overlay: damped joy-bounce with golden bloom
+        let emotionGlow = 0;
+        let colorB = live.colorB;
+        let scaleX = 1, scaleY = 1, scaleZ = 1;
+        if (emotion === "happy") {
+            const elapsed = (ts - emotionStart) / 1000;
+            if (elapsed > 2.4) {
+                emotion = null;
+            } else {
+                // Damped spring: big joyful hops that settle naturally
+                const spring = Math.sin(elapsed * 13.0) * Math.exp(-elapsed * 2.0);
+                scaleY = 1 + spring * 0.26;            // stretch up...
+                scaleX = scaleZ = 1 - spring * 0.13;   // ...squash sideways (liquid!)
+                const env = Math.exp(-elapsed * 1.1);
+                emotionGlow = env * 0.8;
+                // Blend the rim color toward warm gold while the joy lasts
+                colorB = [
+                    live.colorB[0] + (1.0 - live.colorB[0]) * env * 0.7,
+                    live.colorB[1] + (0.86 - live.colorB[1]) * env * 0.7,
+                    live.colorB[2] + (0.45 - live.colorB[2]) * env * 0.7
+                ];
+            }
+        }
+
         uniforms.uTime.value = shaderTime;
-        uniforms.uAmplitude.value = live.amplitude + speakBoost;
+        uniforms.uAmplitude.value = live.amplitude + speakBoost + emotionGlow * 0.12;
         uniforms.uFrequency.value = live.frequency;
-        uniforms.uGlow.value = live.glow;
+        uniforms.uGlow.value = live.glow + emotionGlow;
         uniforms.uColorA.value.setRGB(live.colorA[0], live.colorA[1], live.colorA[2]);
-        uniforms.uColorB.value.setRGB(live.colorB[0], live.colorB[1], live.colorB[2]);
-        haloUniforms.uColor.value.setRGB(live.colorB[0], live.colorB[1], live.colorB[2]);
-        haloUniforms.uIntensity.value = 0.35 + live.glow * 0.25 + speakBoost;
+        uniforms.uColorB.value.setRGB(colorB[0], colorB[1], colorB[2]);
+        haloUniforms.uColor.value.setRGB(colorB[0], colorB[1], colorB[2]);
+        haloUniforms.uIntensity.value = 0.35 + live.glow * 0.25 + speakBoost + emotionGlow * 0.5;
 
         orbMesh.rotation.y += live.rotation;
         orbMesh.rotation.z += live.rotation * 0.4;
+
+        // Always alive: gentle buoyant bobbing + squash & stretch from emotions
+        const bob = Math.sin(ts / 1000 * 0.9) * 0.045;
+        orbMesh.position.y = bob;
+        haloMesh.position.y = bob;
+        orbMesh.scale.set(scaleX, scaleY, scaleZ);
+        haloMesh.scale.set(scaleX, scaleY, scaleZ);
 
         // Lean toward the cursor
         const targetRotX = pointer.y * 0.25;
@@ -328,8 +372,9 @@
     function drawFrequencyRing(t, speakBoost) {
         const w = freqCanvas.clientWidth || container.clientWidth;
         const h = freqCanvas.clientHeight || container.clientHeight;
-        const cx = w / 2, cy = h / 2;
         const orbPx = Math.min(w, h);
+        if (orbPx < 24) return; // container hidden or collapsed: nothing to draw
+        const cx = w / 2, cy = h / 2;
         const baseRadius = orbPx * 0.36;
 
         freqCtx.clearRect(0, 0, w, h);
@@ -384,5 +429,5 @@
         }
     }
 
-    window.ApexOrb = { init, setState, getState, pulse, resize };
+    window.ApexOrb = { init, setState, getState, pulse, resize, emote };
 })();
