@@ -6,6 +6,8 @@
 ![JavaScript](https://img.shields.io/badge/javascript-ES6%2B-yellow)
 ![Three.js](https://img.shields.io/badge/three.js-WebGL-black)
 
+**Built by [Lattice Startup](https://lattices.cl)** | **Creator:** [LinkedIn/delnr91](https://www.linkedin.com/in/delnr91)
+
 [EN English](#english) | [ES Espanol](#espanol) | [ZH Zhongwen](#zhongwen)
 
 ---
@@ -27,16 +29,16 @@ This project is built as a decoupled Full Stack microservice architecture:
 * **Backend:** Deployed on **Render** using a native Docker container to serve the FastAPI application.
 
 ### Support the Project
-This project is open-source. If you want to support aerospace innovation and help cover the backend server costs, consider donating:
+This project is open-source and built by Lattice Startup. If you want to support aerospace innovation and help cover the backend server costs, consider donating:
 
 **Binance USDT (Network: TRC20)**
 Double-click the address below to copy:
 ```text
-[INSERT_YOUR_BINANCE_WALLET_ADDRESS_HERE]
+TQs4zW7dCTCmCPWG7TYCUAbtag9kphR4AG
 ```
 *(You can also scan the QR code below using your Binance mobile app)*
 <br>
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=[INSERT_YOUR_BINANCE_WALLET_ADDRESS_HERE]" width="150" alt="Donate QR Code">
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TQs4zW7dCTCmCPWG7TYCUAbtag9kphR4AG" width="150" alt="Donate QR Code">
 
 ---
 
@@ -57,16 +59,16 @@ Este proyecto esta desplegado en produccion dividiendo la carga de la siguiente 
 * **Backend:** Desplegado en **Render** usando un contenedor Docker para servir la API de Python 24/7.
 
 ### Apoya el Proyecto
-Este proyecto es de codigo abierto. Si deseas apoyar a la innovacion aeroespacial y ayudar a cubrir los costos del servidor, considera donar:
+Este proyecto es de codigo abierto y construido por Lattice Startup. Si deseas apoyar a la innovacion aeroespacial y ayudar a cubrir los costos del servidor, considera donar:
 
 **Binance USDT (Red: TRC20)**
 Haz doble clic en la direccion para copiarla rapidamente:
 ```text
-[INSERTA_TU_BILLETERA_BINANCE_AQUI]
+TQs4zW7dCTCmCPWG7TYCUAbtag9kphR4AG
 ```
 *(Tambien puedes escanear el codigo QR de abajo directamente desde tu app movil de Binance)*
 <br>
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=[INSERTA_TU_BILLETERA_BINANCE_AQUI]" width="150" alt="Codigo QR Donacion">
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TQs4zW7dCTCmCPWG7TYCUAbtag9kphR4AG" width="150" alt="Codigo QR Donacion">
 
 ---
 
@@ -88,10 +90,10 @@ Haz doble clic en la direccion para copiarla rapidamente:
 ### 支持项目
 **USDT (TRC20 / Binance):**
 ```text
-[在此处插入您的_BINANCE_钱包地址]
+TQs4zW7dCTCmCPWG7TYCUAbtag9kphR4AG
 ```
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=[在此处插入您的_BINANCE_钱包地址]" width="150" alt="QR Code">
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TQs4zW7dCTCmCPWG7TYCUAbtag9kphR4AG" width="150" alt="QR Code">
 
 ---
 ## License
-MIT License. Copyright (c) 2026.
+MIT License. Built by [Lattice Startup](https://lattices.cl). Copyright (c) 2026.
