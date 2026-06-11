@@ -1386,10 +1386,10 @@ function handleUserMessageSubmit() {
     const typingBubble = showTypingIndicator();
 
     // 3. Process search, then transmit the reply progressively
-    setTimeout(() => {
+    setTimeout(async () => {
         if (typingBubble) typingBubble.remove();
 
-        const response = querySecondBrainAgent(message);
+        const response = await querySecondBrainAgent(message);
         if (!response) { setAgentState("idle"); return; }
 
         let fullReplyText;
