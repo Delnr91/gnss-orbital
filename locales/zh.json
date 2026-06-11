@@ -1,0 +1,109 @@
+{
+  "meta": {
+    "language": "简体中文",
+    "code": "zh"
+  },
+  "orbit": {
+    "semi_major_axis": "半长轴",
+    "eccentricity": "偏心率",
+    "inclination": "轨道倾角",
+    "raan": "升交点赤经 (RAAN)",
+    "argument_of_periapsis": "近地点幅角",
+    "true_anomaly": "真近点角",
+    "period": "轨道周期",
+    "perigee_altitude": "近地点高度",
+    "apogee_altitude": "远地点高度",
+    "velocity_at_perigee": "近地点速度",
+    "velocity_at_apogee": "远地点速度",
+    "velocity_current": "当前速度",
+    "units": {
+      "km": "千米 (km)",
+      "deg": "度 (°)",
+      "s": "秒 (s)",
+      "hrs": "小时",
+      "km_s": "千米/秒 (km/s)"
+    }
+  },
+  "orbit_types": {
+    "leo": "近地轨道 (LEO)",
+    "meo": "中地球轨道 (MEO)",
+    "geo": "地球静止轨道 (GEO)",
+    "heo": "高椭圆轨道 (HEO)"
+  },
+  "errors": {
+    "eccentricity_range": "偏心率必须满足 0 <= e < 1。输入值: {e}",
+    "tolerance_positive": "容差必须为正数。输入值: {tol}",
+    "max_iter_positive": "最大迭代次数必须至少为 1。输入值: {max_iter}",
+    "kepler_convergence": "牛顿-拉夫逊方法在迭代 {max_iter} 次后未能收敛（要求的容差: {tol}）。",
+    "semi_major_positive": "半长轴必须为正值。输入值: {a} km",
+    "mu_positive": "地球引力常数必须为正值。输入值: {mu} km^3/s^2",
+    "inclination_range": "轨道倾角必须在 0 到 180 度之间。输入值: {i}",
+    "subsurface_orbit": "轨道与地球表面相交！近地点高度 ({perigee:.1f} km) 小于地球半径 ({radius} km)。",
+    "t_span_positive": "传播时间跨度必须为正数。收到：{t_span} s",
+    "mean_motion_positive": "平均运动必须为正数。收到：{n} rad/s",
+    "radius_positive": "径向距离必须为正数。收到：{r} km",
+    "perigee_apogee_order": "近地点高度（{perigee} km）必须低于远地点高度（{apogee} km）。"
+  },
+  "ui": {
+    "title_orbit_simulation": "开普勒轨道三维交互式模拟",
+    "title_multi_orbit": "地球轨道类型对比",
+    "title_iris2": "欧盟 IRIS2 多轨道星座模型",
+    "earth": "地球",
+    "satellite": "卫星",
+    "legend_orbit": "轨道路径",
+    "legend_satellite": "卫星位置",
+    "axes": {
+      "x": "X轴 [km]",
+      "y": "Y轴 [km]",
+      "z": "Z轴 [km]"
+    },
+    "widgets": {
+      "lang_select": "Language / Idioma / 语言",
+      "semi_major_axis": "半长轴 (a) [km]",
+      "eccentricity": "偏心率 (e)",
+      "inclination": "倾角 (i) [°]",
+      "raan": "升交点赤经 (Ω) [°]",
+      "argument_of_periapsis": "近地点幅角 (ω) [°]",
+      "true_anomaly": "真近点角 (ν) [°]",
+      "orbit_preset": "选择预设轨道",
+      "animate": "开启动画演示",
+      "time_step": "时间步长 (速度)"
+    }
+  },
+  "achievements": {
+    "title": "解锁成就！",
+    "unlocked_list": "已解锁成就：",
+    "bronze": {
+      "leo_explorer": {
+        "title": "铜牌：轨道探索者",
+        "description": "成功模拟了一条近地轨道 (LEO)。"
+      },
+      "kepler_solver": {
+        "title": "铜牌：开普勒学徒",
+        "description": "首次使用数值方法解出开普勒方程。"
+      }
+    },
+    "silver": {
+      "navigator": {
+        "title": "银牌：轨道领航员",
+        "description": "成功修改全部 6 个经典轨道六要素并完成轨道外推。"
+      },
+      "comparison": {
+        "title": "银牌：轨道分析师",
+        "description": "并排对比分析了四种标准地球轨道类型（LEO, MEO, GEO, HEO）。"
+      }
+    },
+    "gold": {
+      "hohmann": {
+        "title": "金牌：航天飞行员",
+        "description": "成功设计了一条从 LEO 到 GEO 的霍曼转移轨道。"
+      }
+    },
+    "master": {
+      "iris2_architect": {
+        "title": "大师：IRIS2 星座架构师",
+        "description": "成功为欧洲 IRIS2 多轨道星座建模。"
+      }
+    }
+  }
+}

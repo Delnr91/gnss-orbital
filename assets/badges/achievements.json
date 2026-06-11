@@ -1,0 +1,46 @@
+{
+  "achievements": [
+    {
+      "id": "leo_explorer",
+      "tier": "bronze",
+      "title_key": "achievements.bronze.leo_explorer.title",
+      "description_key": "achievements.bronze.leo_explorer.description",
+      "condition": "simulate_leo"
+    },
+    {
+      "id": "kepler_solver",
+      "tier": "bronze",
+      "title_key": "achievements.bronze.kepler_solver.title",
+      "description_key": "achievements.bronze.kepler_solver.description",
+      "condition": "solve_kepler"
+    },
+    {
+      "id": "navigator",
+      "tier": "silver",
+      "title_key": "achievements.silver.navigator.title",
+      "description_key": "achievements.silver.navigator.description",
+      "condition": "modify_six_elements"
+    },
+    {
+      "id": "comparison",
+      "tier": "silver",
+      "title_key": "achievements.silver.comparison.title",
+      "description_key": "achievements.silver.comparison.description",
+      "condition": "compare_four_orbits"
+    },
+    {
+      "id": "hohmann",
+      "tier": "gold",
+      "title_key": "achievements.gold.hohmann.title",
+      "description_key": "achievements.gold.hohmann.description",
+      "condition": "hohmann_transfer"
+    },
+    {
+      "id": "iris2_architect",
+      "tier": "master",
+      "title_key": "achievements.master.iris2_architect.title",
+      "description_key": "achievements.master.iris2_architect.description",
+      "condition": "model_iris2"
+    }
+  ]
+}

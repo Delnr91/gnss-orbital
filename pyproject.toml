@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gnss-orbital-py"
+version = "0.2.0"
+description = "Keplerian Orbital Dynamics and Interactive 3D Visualization Platform"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    { name = "Aerospace Engineering Developers", email = "info@example.com" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+    "numpy>=1.21.0",
+    "plotly>=5.0.0",
+    "ipywidgets>=8.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "mypy>=1.0.0",
+]
+astrodynamics = [
+    "poliastro>=0.17.0",
+    "astropy>=5.0.0",
+]
+web = [
+    "streamlit>=1.20.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+pythonpath = ["src"]
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+exclude = ["build/", "dist/", "venv/", ".venv/"]
+disable_error_code = ["type-arg", "no-untyped-call", "no-any-return", "no-untyped-def"]
+
+[tool.setuptools]
+packages = ["orbital"]
+
+[tool.setuptools.package-dir]
+orbital = "src/orbital"

@@ -1,0 +1,109 @@
+{
+  "meta": {
+    "language": "Español",
+    "code": "es"
+  },
+  "orbit": {
+    "semi_major_axis": "Semieje Mayor",
+    "eccentricity": "Excentricidad",
+    "inclination": "Inclinación",
+    "raan": "RAAN (Ascensión Recta del Nodo Ascendente)",
+    "argument_of_periapsis": "Argumento del Periapsis",
+    "true_anomaly": "Anomalía Verdadera",
+    "period": "Periodo Orbital",
+    "perigee_altitude": "Altitud del Perigeo",
+    "apogee_altitude": "Altitud del Apogeo",
+    "velocity_at_perigee": "Velocidad en el Perigeo",
+    "velocity_at_apogee": "Velocidad en el Apogeo",
+    "velocity_current": "Velocidad Actual",
+    "units": {
+      "km": "km",
+      "deg": "°",
+      "s": "s",
+      "hrs": "horas",
+      "km_s": "km/s"
+    }
+  },
+  "orbit_types": {
+    "leo": "Órbita Baja Terrestre (LEO)",
+    "meo": "Órbita Media Terrestre (MEO)",
+    "geo": "Órbita Geoestacionaria (GEO)",
+    "heo": "Órbita Altamente Elíptica (HEO)"
+  },
+  "errors": {
+    "eccentricity_range": "La excentricidad debe cumplir 0 <= e < 1. Recibido: {e}",
+    "tolerance_positive": "La tolerancia debe ser positiva. Recibido: {tol}",
+    "max_iter_positive": "El número máximo de iteraciones debe ser al menos 1. Recibido: {max_iter}",
+    "kepler_convergence": "El método de Newton-Raphson no convergió tras {max_iter} iteraciones (tolerancia solicitada: {tol}).",
+    "semi_major_positive": "El semieje mayor debe ser positivo. Recibido: {a} km",
+    "mu_positive": "El parámetro gravitacional debe ser positivo. Recibido: {mu} km^3/s^2",
+    "inclination_range": "La inclinación debe estar entre 0 y 180 grados. Recibido: {i}",
+    "subsurface_orbit": "¡La órbita intercepta la superficie terrestre! La altitud de perigeo ({perigee:.1f} km) es menor que el radio de la Tierra ({radius} km).",
+    "t_span_positive": "El intervalo de propagación debe ser positivo. Recibido: {t_span} s",
+    "mean_motion_positive": "El movimiento medio debe ser positivo. Recibido: {n} rad/s",
+    "radius_positive": "La distancia radial debe ser positiva. Recibido: {r} km",
+    "perigee_apogee_order": "La altitud del perigeo ({perigee} km) debe ser menor que la del apogeo ({apogee} km)."
+  },
+  "ui": {
+    "title_orbit_simulation": "Simulación 3D de Órbita Kepleriana",
+    "title_multi_orbit": "Comparación de Tipos de Órbita",
+    "title_iris2": "Modelo Multi-Orbital de la Constelación IRIS2",
+    "earth": "Tierra",
+    "satellite": "Satélite",
+    "legend_orbit": "Trayectoria Orbital",
+    "legend_satellite": "Posición del Satélite",
+    "axes": {
+      "x": "X [km]",
+      "y": "Y [km]",
+      "z": "Z [km]"
+    },
+    "widgets": {
+      "lang_select": "Language / Idioma / 语言",
+      "semi_major_axis": "Semieje Mayor (a) [km]",
+      "eccentricity": "Excentricidad (e)",
+      "inclination": "Inclinación (i) [°]",
+      "raan": "RAAN (Ω) [°]",
+      "argument_of_periapsis": "Arg. de Periapsis (ω) [°]",
+      "true_anomaly": "Anomalía Verdadera (ν) [°]",
+      "orbit_preset": "Seleccionar Órbita Predeterminada",
+      "animate": "Animar Órbita",
+      "time_step": "Escala de Tiempo (velocidad)"
+    }
+  },
+  "achievements": {
+    "title": "¡Logro Desbloqueado!",
+    "unlocked_list": "Logros Desbloqueados:",
+    "bronze": {
+      "leo_explorer": {
+        "title": "Bronce: Explorador Orbital",
+        "description": "Simuló una Órbita Baja Terrestre (LEO) con éxito."
+      },
+      "kepler_solver": {
+        "title": "Bronce: Aprendiz de Kepler",
+        "description": "Resolvió numéricamente la ecuación de Kepler por primera vez."
+      }
+    },
+    "silver": {
+      "navigator": {
+        "title": "Plata: Navegante Orbital",
+        "description": "Modificó los 6 elementos orbitales clásicos y propagó la órbita."
+      },
+      "comparison": {
+        "title": "Plata: Analista de Trayectorias",
+        "description": "Comparó los 4 tipos estándar de órbitas terrestres (LEO, MEO, GEO, HEO)."
+      }
+    },
+    "gold": {
+      "hohmann": {
+        "title": "Oro: Piloto Espacial",
+        "description": "Diseñó una transferencia de Hohmann entre LEO y GEO."
+      }
+    },
+    "master": {
+      "iris2_architect": {
+        "title": "Maestro: Arquitecto de IRIS2",
+        "description": "Modeló la constelación multi-orbital europea IRIS2."
+      }
+    }
+  }
+}

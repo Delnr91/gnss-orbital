@@ -1,0 +1,109 @@
+{
+  "meta": {
+    "language": "English",
+    "code": "en"
+  },
+  "orbit": {
+    "semi_major_axis": "Semi-major Axis",
+    "eccentricity": "Eccentricity",
+    "inclination": "Inclination",
+    "raan": "RAAN (Right Ascension of the Ascending Node)",
+    "argument_of_periapsis": "Argument of Periapsis",
+    "true_anomaly": "True Anomaly",
+    "period": "Orbital Period",
+    "perigee_altitude": "Perigee Altitude",
+    "apogee_altitude": "Apogee Altitude",
+    "velocity_at_perigee": "Velocity at Perigee",
+    "velocity_at_apogee": "Velocity at Apogee",
+    "velocity_current": "Current Velocity",
+    "units": {
+      "km": "km",
+      "deg": "deg",
+      "s": "s",
+      "hrs": "hours",
+      "km_s": "km/s"
+    }
+  },
+  "orbit_types": {
+    "leo": "Low Earth Orbit (LEO)",
+    "meo": "Medium Earth Orbit (MEO)",
+    "geo": "Geostationary Orbit (GEO)",
+    "heo": "Highly Elliptical Orbit (HEO)"
+  },
+  "errors": {
+    "eccentricity_range": "Eccentricity must satisfy 0 <= e < 1. Received: {e}",
+    "tolerance_positive": "Tolerance must be positive. Received: {tol}",
+    "max_iter_positive": "Max iterations must be at least 1. Received: {max_iter}",
+    "kepler_convergence": "Newton-Raphson method failed to converge after {max_iter} iterations (requested tolerance: {tol}).",
+    "semi_major_positive": "Semi-major axis must be positive. Received: {a} km",
+    "mu_positive": "Gravitational parameter must be positive. Received: {mu} km^3/s^2",
+    "inclination_range": "Inclination must be between 0 and 180 degrees. Received: {i}",
+    "subsurface_orbit": "The orbit intersects the Earth's surface! Perigee altitude ({perigee:.1f} km) is less than Earth's radius ({radius} km).",
+    "t_span_positive": "Propagation time span must be positive. Received: {t_span} s",
+    "mean_motion_positive": "Mean motion must be positive. Received: {n} rad/s",
+    "radius_positive": "Radial distance must be positive. Received: {r} km",
+    "perigee_apogee_order": "Perigee altitude ({perigee} km) must be lower than apogee altitude ({apogee} km)."
+  },
+  "ui": {
+    "title_orbit_simulation": "3D Keplerian Orbit Simulation",
+    "title_multi_orbit": "Comparison of Orbit Types",
+    "title_iris2": "IRIS2 Constellation Multi-Orbital Model",
+    "earth": "Earth",
+    "satellite": "Satellite",
+    "legend_orbit": "Orbit Path",
+    "legend_satellite": "Satellite Position",
+    "axes": {
+      "x": "X [km]",
+      "y": "Y [km]",
+      "z": "Z [km]"
+    },
+    "widgets": {
+      "lang_select": "Language / Idioma / 语言",
+      "semi_major_axis": "Semi-major axis (a) [km]",
+      "eccentricity": "Eccentricity (e)",
+      "inclination": "Inclination (i) [deg]",
+      "raan": "RAAN (Ω) [deg]",
+      "argument_of_periapsis": "Arg. of Periapsis (ω) [deg]",
+      "true_anomaly": "True Anomaly (ν) [deg]",
+      "orbit_preset": "Select Orbit Preset",
+      "animate": "Animate Orbit",
+      "time_step": "Time Scale (speed)"
+    }
+  },
+  "achievements": {
+    "title": "Achievement Unlocked!",
+    "unlocked_list": "Unlocked Achievements:",
+    "bronze": {
+      "leo_explorer": {
+        "title": "Bronze: Orbit Explorer",
+        "description": "Simulated a Low Earth Orbit (LEO) successfully."
+      },
+      "kepler_solver": {
+        "title": "Bronze: Keplerian Apprentist",
+        "description": "Solved the Kepler equation numerically for the first time."
+      }
+    },
+    "silver": {
+      "navigator": {
+        "title": "Silver: Orbital Navigator",
+        "description": "Modified all 6 classical orbital elements and propagated the orbit."
+      },
+      "comparison": {
+        "title": "Silver: Trajectory analyst",
+        "description": "Compared all 4 standard orbit types (LEO, MEO, GEO, HEO) side-by-side."
+      }
+    },
+    "gold": {
+      "hohmann": {
+        "title": "Gold: Space Pilot",
+        "description": "Designed a Hohmann transfer orbit between LEO and GEO."
+      }
+    },
+    "master": {
+      "iris2_architect": {
+        "title": "Master: IRIS2 Constellation Designer",
+        "description": "Modeled the European IRIS2 multi-orbital constellation."
+      }
+    }
+  }
+}

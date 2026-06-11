@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APEX-1 Space Academy Study Deck (Year 2050)</title>
+    
+    <!-- Google Fonts: Orbitron (NASA tech titles), Share Tech Mono (instruments), Inter (content) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Three.js for high-performance 3D canvas simulation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- OrbitControls for dragging and panning the 3D space scene -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Marked.js for rendering markdown second brain responses -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- KaTeX for live math rendering inside agent transmissions -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Interactive 3D Parallax Background Canvas -->
+    <canvas id="bg-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; outline: none;"></canvas>
+
+    <!-- Looping Background Video from Veo/Runway -->
+    <video autoplay loop muted playsinline id="bg-video" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -3; opacity: 0.8;">
+        <source src="assets/video/background.mp4" type="video/mp4">
+    </video>
+
+    <div id="labels-container" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10;"></div>
+    <!-- Cybernetic Scanline Overlay for 2050 Hologram Feel -->
+    <div class="hologram-scanlines"></div>
+    
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-icon">◈</span>
+                <div class="brand-text">
+                    <h1>APEX-1</h1>
+                    <p>ACADEMY DECK 2050</p>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="overview" id="nav-btn-overview">
+                    <span class="icon">▤</span> <span class="label" data-i18n="nav.overview">Overview</span>
+                </button>
+                <button class="nav-item" data-tab="simulator" id="nav-btn-simulator">
+                    <span class="icon">⎈</span> <span class="label" data-i18n="nav.simulator">3D Simulator</span>
+                </button>
+                <button class="nav-item" data-tab="brain" id="nav-btn-brain">
+                    <span class="icon">◈</span> <span class="label" data-i18n="nav.brain">Space Agent</span>
+                </button>
+                <button class="nav-item" data-tab="jupyter" id="nav-btn-jupyter">
+                    <span class="icon">⌨</span> <span class="label" data-i18n="nav.jupyter">Jupyter Lab</span>
+                </button>
+            </nav>
+            
+            <!-- System Status Indicator in Sidebar -->
+            <div class="sidebar-status">
+                <div class="status-header">DECK LOGS</div>
+                <div class="status-row"><span class="lbl">Hologram:</span> <span class="val cyan-text">STABLE</span></div>
+                <div class="status-row"><span class="lbl">Cores:</span> <span class="val green-text">100% ONLINE</span></div>
+                <div class="status-row"><span class="lbl">Database:</span> <span class="val purple-text">LOCAL_KB_v4</span></div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="lang-selector">
+                    <label for="lang-select">🌐</label>
+                    <select id="lang-select">
+                        <option value="en">English</option>
+                        <option value="es">Español</option>
+                        <option value="zh">简体中文</option>
+                    </select>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Display Panel -->
+        <main class="main-content">
+            <!-- HUD HEADER BAR -->
+            <div class="hud-header-bar">
+                <div class="hud-clock">
+                    <span class="hud-label" data-i18n="hud.stardate">STARDATE:</span>
+                    <span id="digital-clock" class="hud-value">2050.06.10 20:11:00 UTC</span>
+                </div>
+                <div class="hud-telemetry">
+                    <span class="hud-label" data-i18n="hud.telemetry">TELEMETRY LINK:</span>
+                    <span class="hud-value glow-green" data-i18n="hud.active">ACTIVE</span>
+                </div>
+                <div class="hud-orbit">
+                    <span class="hud-label" data-i18n="hud.sector">SECTOR:</span>
+                    <span class="hud-value">SOL-EARTH-L1</span>
+                </div>
+            </div>
+
+            <!-- TAB 0: OVERVIEW -->
+            <section id="tab-overview" class="tab-pane active">
+                <header class="content-header animate-fade-in">
+                    <h2 data-i18n="overview.title">APEX-1 Orbital Operations</h2>
+                    <p data-i18n="overview.subtitle">Interactive Keplerian Trajectory Planning & Space Second Brain</p>
+                </header>
+                
+                <div class="overview-grid">
+                    <!-- Left: Briefing -->
+                    <div class="glass-card overview-card card-glowing-blue animate-slide-up">
+                        <h3 class="card-title"><span class="title-decor"></span><span data-i18n="overview.briefing_title">MISSION BRIEFING</span></h3>
+                        <p class="briefing-text" data-i18n="overview.briefing_text">
+                            Welcome to the interactive training suite. This system models and solves Keplerian two-body orbital mechanics. It is designed to train space engineering students in orbital parameters (LEO, MEO, GEO, HEO), satellite constellation tracking, and non-Keplerian perturbations (J2 effect). Our local core covers next-gen 2030 GNSS and the EU's IRIS² multi-orbital architectures.
+                        </p>
+                        
+                        <!-- Telemetry Sensors (CSS Animated) -->
+                        <div class="sensor-readouts">
+                            <h4 class="sensor-title" data-i18n="overview.system_monitor">SYSTEM MONITOR</h4>
+                            <div class="sensor-grid">
+                                <div class="sensor-cell">
+                                    <span class="sensor-label" data-i18n="overview.ionosphere">Ionosphere Density</span>
+                                    <div class="sensor-progress-bar"><div class="fill fill-blue" style="width: 45%;"></div></div>
+                                    <span class="sensor-value">4.2 × 10¹¹ e⁻/m³</span>
+                                </div>
+                                <div class="sensor-cell">
+                                    <span class="sensor-label" data-i18n="overview.solar_wind">Solar Wind Speed</span>
+                                    <div class="sensor-progress-bar"><div class="fill fill-purple" style="width: 72%;"></div></div>
+                                    <span class="sensor-value">422.8 km/s</span>
+                                </div>
+                                <div class="sensor-cell">
+                                    <span class="sensor-label" data-i18n="overview.clock_shift">Clock Relativistic Shift</span>
+                                    <div class="sensor-progress-bar"><div class="fill fill-cyan" style="width: 60%;"></div></div>
+                                    <span class="sensor-value">+38.5 μs/day</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="briefing-stats">
+                            <div class="stat-pill"><span class="label" data-i18n="overview.gravitational">Gravitational Parameter:</span> <span class="value">μ = 398600.44 km³/s²</span></div>
+                            <div class="stat-pill"><span class="label" data-i18n="overview.earth_radius">Earth Equatorial Radius:</span> <span class="value">R = 6371.0 km</span></div>
+                            <div class="stat-pill"><span class="label" data-i18n="overview.zonal_harmonics">Zonal Harmonics Bulge:</span> <span class="value">J2 = 1.08263 × 10⁻³</span></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Constellation Status Monitor -->
+                    <div class="glass-card overview-card card-glowing-green animate-slide-up" style="animation-delay: 0.1s;">
+                        <h3 class="card-title"><span class="title-decor"></span><span data-i18n="overview.constellation_title">CONSTELLATION STATUS MONITOR</span></h3>
+                        <p class="briefing-text" data-i18n="overview.constellation_desc">
+                            Live active satellite fleets telemetry and synchronization parameters in the Earth-Centered Inertial (ECI) frame.
+                        </p>
+                        
+                        <div class="constellation-list">
+                            <div class="constellation-item">
+                                <div class="constellation-meta">
+                                    <span class="constellation-name" data-i18n="overview.constellation.gps">GPS III (USA)</span>
+                                    <span class="constellation-status glow-green" data-i18n="overview.status.nominal">NOMINAL</span>
+                                </div>
+                                <div class="constellation-details">
+                                    <span><span data-i18n="overview.constellation.altitude">Altitude</span>: 20,200 km</span>
+                                    <span><span data-i18n="overview.constellation.planes">Planes</span>: 6</span>
+                                </div>
+                            </div>
+                            
+                            <div class="constellation-item">
+                                <div class="constellation-meta">
+                                    <span class="constellation-name" data-i18n="overview.constellation.galileo">Galileo (EU)</span>
+                                    <span class="constellation-status glow-green" data-i18n="overview.status.nominal">NOMINAL</span>
+                                </div>
+                                <div class="constellation-details">
+                                    <span><span data-i18n="overview.constellation.altitude">Altitude</span>: 23,222 km</span>
+                                    <span><span data-i18n="overview.constellation.planes">Planes</span>: 3</span>
+                                </div>
+                            </div>
+                            
+                            <div class="constellation-item">
+                                <div class="constellation-meta">
+                                    <span class="constellation-name" data-i18n="overview.constellation.beidou">BeiDou-3 (CN)</span>
+                                    <span class="constellation-status glow-green" data-i18n="overview.status.nominal">NOMINAL</span>
+                                </div>
+                                <div class="constellation-details">
+                                    <span><span data-i18n="overview.constellation.altitude">Altitude</span>: 21,528 km</span>
+                                    <span><span data-i18n="overview.constellation.planes">Planes</span>: 3</span>
+                                </div>
+                            </div>
+                            
+                            <div class="constellation-item">
+                                <div class="constellation-meta">
+                                    <span class="constellation-name" data-i18n="overview.constellation.iris">IRIS² Hybrid (EU)</span>
+                                    <span class="constellation-status glow-cyan" data-i18n="overview.status.syncing">SYNC ACTIVE</span>
+                                </div>
+                                <div class="constellation-details">
+                                    <span><span data-i18n="overview.constellation.altitude">Altitude</span>: 400 - 1,200 km</span>
+                                    <span><span data-i18n="overview.constellation.planes">Planes</span>: Multi</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- TAB 1: SIMULATOR -->
+            <section id="tab-simulator" class="tab-pane">
+                <header class="content-header">
+                    <h2 data-i18n="sim.title">3D Orbit Simulator</h2>
+                    <p data-i18n="sim.subtitle">Propagate Keplerian trajectories and analyze satellite speeds in real-time.</p>
+                </header>
+                
+                <div class="simulator-grid">
+                    <!-- Control panel card -->
+                    <div class="glass-card controls-card">
+                        <h3 data-i18n="ctrl.presets">Orbit Presets</h3>
+                        <div class="preset-buttons">
+                            <button class="btn-preset active" data-preset="custom" data-i18n="preset.custom" id="preset-custom">Custom</button>
+                            <button class="btn-preset" data-preset="leo" data-i18n="preset.leo" id="preset-leo">LEO (ISS)</button>
+                            <button class="btn-preset" data-preset="meo" data-i18n="preset.meo" id="preset-meo">MEO (GPS)</button>
+                            <button class="btn-preset" data-preset="geo" data-i18n="preset.geo" id="preset-geo">GEO</button>
+                            <button class="btn-preset" data-preset="heo" data-i18n="preset.heo" id="preset-heo">HEO (Molniya)</button>
+                            <button id="btn-constellation" class="btn-preset glow-green" style="width: 100%; margin-top: 10px;" data-i18n="ctrl.constellation">◈ MULTI-ORBIT VIEW</button>
+                        </div>
+                        
+                        <hr class="divider">
+                        
+                        <h3 data-i18n="ctrl.elements">Classical Elements</h3>
+                        
+                        <div class="slider-group">
+                            <div class="slider-label">
+                                <span data-i18n="element.a">Semi-major axis (a)</span>
+                                <span class="value-display"><span id="val-a">7000</span> km</span>
+                            </div>
+                            <input type="range" id="slider-a" min="6500" max="45000" value="7000" step="100">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-label">
+                                <span data-i18n="element.e">Eccentricity (e)</span>
+                                <span class="value-display" id="val-e">0.01</span>
+                            </div>
+                            <input type="range" id="slider-e" min="0" max="0.9" value="0.01" step="0.01">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-label">
+                                <span data-i18n="element.i">Inclination (i)</span>
+                                <span class="value-display"><span id="val-i">51.6</span>°</span>
+                            </div>
+                            <input type="range" id="slider-i" min="0" max="180" value="51.6" step="0.5">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-label">
+                                <span>RAAN (Ω)</span>
+                                <span class="value-display"><span id="val-raan">0</span>°</span>
+                            </div>
+                            <input type="range" id="slider-raan" min="0" max="360" value="0" step="1">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-label">
+                                <span data-i18n="element.argp">Arg. of Periapsis (ω)</span>
+                                <span class="value-display"><span id="val-argp">0</span>°</span>
+                            </div>
+                            <input type="range" id="slider-argp" min="0" max="360" value="0" step="1">
+                        </div>
+                        
+                        <div id="subsurface-warning" class="warning-box hidden">
+                            <span class="warning-icon">⚠</span>
+                            <span id="warning-text">Orbit intersects Earth's surface!</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Plot pane -->
+                    <div class="plot-container">
+                        <div class="glass-card plot-card">
+                            <!-- Three.js 3D WebGL Canvas container -->
+                            <div id="canvas-container">
+                                <!-- Palantir Tactical Telemetry Card (Hidden by default) -->
+                                <div id="satellite-telemetry-card" class="tactical-card hidden">
+                                    <div class="tactical-header">TARGET: ACTIVE SATELLITE</div>
+                                    <div class="tactical-body">
+                                        <div class="tactical-row"><span class="t-lbl">ALTITUDE:</span><span class="t-val" id="tele-alt">--</span></div>
+                                        <div class="tactical-row"><span class="t-lbl">VELOCITY:</span><span class="t-val" id="tele-vel">--</span></div>
+                                        <div class="tactical-row"><span class="t-lbl">ECI X:</span><span class="t-val" id="tele-x">--</span></div>
+                                        <div class="tactical-row"><span class="t-lbl">ECI Y:</span><span class="t-val" id="tele-y">--</span></div>
+                                        <div class="tactical-row"><span class="t-lbl">ECI Z:</span><span class="t-val" id="tele-z">--</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Mini metrics -->
+                        <div class="metrics-grid">
+                            <div class="glass-card metric-card">
+                                <span class="metric-label" data-i18n="metric.period">Orbital Period</span>
+                                <span class="metric-value" id="metric-period">1.5 hrs</span>
+                            </div>
+                            <div class="glass-card metric-card">
+                                <span class="metric-label" data-i18n="metric.perigee">Perigee Altitude</span>
+                                <span class="metric-value" id="metric-perigee">629 km</span>
+                            </div>
+                            <div class="glass-card metric-card">
+                                <span class="metric-label" data-i18n="metric.apogee">Apogee Altitude</span>
+                                <span class="metric-value" id="metric-apogee">629 km</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: SPACE AGENT (Living Liquid Core) -->
+            <section id="tab-brain" class="tab-pane">
+                <div class="agent-stage">
+                    <!-- The Living Core: shader orb + frequency emission ring -->
+                    <div id="orb-container" title="">
+                        <canvas id="freq-canvas"></canvas>
+                        <canvas id="orb-canvas"></canvas>
+                    </div>
+
+                    <!-- Identity block: name letters + live status -->
+                    <div class="agent-identity">
+                        <h2 class="agent-name" aria-label="APEX-1">
+                            <span>A</span><span>P</span><span>E</span><span>X</span><span class="agent-name-dash">—</span><span>1</span>
+                        </h2>
+                        <div class="agent-status-line">
+                            <span class="status-dot" id="agent-status-dot"></span>
+                            <span id="agent-status-text" data-i18n="agent.status.online">CORE ONLINE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agent-chat">
+                    <!-- Messages Log -->
+                    <div class="chat-history" id="chat-messages">
+                        <!-- Instantiated dynamically -->
+                    </div>
+
+                    <!-- Suggestion Chips -->
+                    <div class="suggestion-chips" id="suggestion-chips">
+                        <!-- Populated via JS -->
+                    </div>
+
+                    <!-- Input Bar -->
+                    <div class="chat-input-bar">
+                        <span class="input-prompt-symbol">❯</span>
+                        <input type="text" id="chat-input" placeholder="Query APEX-1 (e.g. Hohmann, J2, GNSS)..." autocomplete="off">
+                        <button id="btn-chat-send" data-i18n="brain.send">Send</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: JUPYTER RESEARCH CONSOLE -->
+            <section id="tab-jupyter" class="tab-pane">
+                <!-- Launcher view: notebook mission cards -->
+                <div id="jupyter-launcher" class="jupyter-launcher">
+                    <header class="content-header">
+                        <h2 data-i18n="jupyter.title">Research Console</h2>
+                        <p data-i18n="jupyter.subtitle">Interactive notebooks with the full Python astrodynamics engine.</p>
+                    </header>
+
+                    <div class="jupyter-status-bar">
+                        <span class="status-dot" id="jupyter-status-dot"></span>
+                        <span id="jupyter-status-text" data-i18n="jupyter.status.checking">SCANNING FOR LOCAL KERNEL…</span>
+                        <button id="btn-jupyter-recheck" class="btn-mini" data-i18n="jupyter.recheck">RESCAN</button>
+                    </div>
+
+                    <div id="jupyter-offline-help" class="jupyter-offline-help hidden">
+                        <p data-i18n="jupyter.offline_hint">No JupyterLab server detected on port 8888. Launch it from the project root:</p>
+                        <div class="command-copy-row">
+                            <code id="jupyter-cmd">jupyter lab --no-browser</code>
+                            <button id="btn-copy-cmd" class="btn-mini" data-i18n="jupyter.copy">COPY</button>
+                        </div>
+                    </div>
+
+                    <div class="notebook-grid" id="notebook-grid">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+                <!-- Embedded view: live JupyterLab iframe -->
+                <div id="jupyter-embed" class="jupyter-embed hidden">
+                    <div class="jupyter-embed-toolbar">
+                        <button id="btn-jupyter-back" class="btn-mini">◂ <span data-i18n="jupyter.back">CONSOLE</span></button>
+                        <span class="embed-title" id="jupyter-embed-title">JupyterLab</span>
+                        <a id="jupyter-external-link" href="http://localhost:8888/lab" target="_blank" rel="noopener" class="btn-mini" data-i18n="jupyter.external">OPEN IN TAB ↗</a>
+                    </div>
+                    <iframe id="jupyter-iframe" src="about:blank" frameborder="0"></iframe>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Load Translations Base first, then the living core, then app logic -->
+    <script src="documents.js"></script>
+    <script src="js/orb.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

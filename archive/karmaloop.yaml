@@ -1,0 +1,56 @@
+# Karmaloop: Architectural Intelligence & Feedback Loop
+# Purpose: Maintains the core logic, memory, and conventions of the gnss-orbital-py project to guide development agents.
+
+project:
+  name: gnss-orbital-py
+  type: Educational Space Dynamics Library
+  language: Python 3.9+
+  target_audience: Students and professionals in aerospace engineering
+
+architecture:
+  pattern_catalog:
+    strategy:
+      purpose: Propagation strategies (Keplerian, perturbations)
+      location: orbital/orbits.py -> PropagationStrategy
+    template_method:
+      purpose: Consistent 3D plot rendering skeletons with layout hooks
+      location: orbital/visualization.py -> OrbitPlotter
+    observer:
+      purpose: Achievement emission and decoupled tracking
+      location: orbital/gamification.py -> ProgressTracker
+    registry:
+      purpose: Global localized strings registry with fallback resolution
+      location: orbital/i18n.py -> Locale
+    factory:
+      purpose: Orbit initialization standard templates (LEO, MEO, GEO, HEO)
+      location: orbital/orbits.py -> create_*_orbit()
+    facade:
+      purpose: Clean entry points to hide internal package structure
+      location: orbital/__init__.py
+
+conventions:
+  naming:
+    code_identifiers: English (PEP 8)
+    backward_compatibility: Spanish aliases provided for public classes/functions
+  documentation:
+    tone: Professional, academic, objective
+    emojis: STRICTLY forbidden in source code, comments, docstrings, and documentation (except for badges/achievements where explicitly required)
+    language: Docstrings in English; Markdown theory in docs/ is bilingual (Spanish primary)
+  i18n:
+    implementation: All printed logs, errors, and plot labels must resolve through `Locale(lang).t("key")`
+    supported: [en, es, zh]
+    default: en
+
+learnings_log:
+  - phase: 0
+    date: 2026-06-10
+    insight: Codebase audit revealed mismatch between README instructions and the actual directory layout. README was using the old 'src/' directory instead of 'orbital/'.
+    action: Restructure README to map perfectly to the actual folders and files.
+  - phase: 0
+    date: 2026-06-10
+    insight: Earth sphere generation in notebooks expected a list/iterable of traces, but `crear_esfera_tierra()` returned a single `go.Surface` object, causing a crash.
+    action: Refactor `crear_esfera_tierra` and `OrbitPlotter.create_earth_sphere` to return a single trace and ensure notebooks handle it correctly as a single trace.
+  - phase: 1
+    date: 2026-06-10
+    insight: Added local progression tracking JSON file (~/.gnss-orbital/progress.json) to store student badge progress, maintaining a zero-backend, clean desktop footprint.
+    action: Implement `ProgressTracker` with local state validation.
