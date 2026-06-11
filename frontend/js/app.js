@@ -1816,3 +1816,30 @@ function initJupyterConsole() {
         });
     };
 }
+
+// Global initialization
+document.addEventListener("DOMContentLoaded", () => {
+    // Hide warning boxes initially if they shouldn't be visible
+    document.querySelectorAll('.warning-box').forEach(box => {
+        if (!box.classList.contains('hidden')) {
+            box.classList.add('hidden');
+        }
+    });
+
+    // Sidebar Toggle Logic
+    const sidebarToggleBtn = document.getElementById("sidebar-toggle");
+    const sidebar = document.querySelector(".sidebar");
+    if (sidebarToggleBtn && sidebar) {
+        sidebarToggleBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("collapsed");
+        });
+    }
+
+    // Language selector setup
+    const langSelect = document.getElementById("lang-select");
+    if (langSelect) {
+        langSelect.addEventListener("change", (e) => {
+            setLanguage(e.target.value);
+        });
+    }
+});

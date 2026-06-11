@@ -92,6 +92,33 @@ body {
     padding: 30px 24px;
     backdrop-filter: blur(25px);
     z-index: 10;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: width 0.3s ease, padding 0.3s ease;
+}
+
+.sidebar.collapsed {
+    width: 80px;
+    padding: 30px 10px;
+}
+
+.sidebar.collapsed .brand-text,
+.sidebar.collapsed .nav-item .label,
+.sidebar.collapsed .status-header,
+.sidebar.collapsed .status-row,
+.sidebar.collapsed .lang-selector select {
+    display: none;
+}
+
+.sidebar.collapsed .nav-item {
+    justify-content: center;
+}
+
+.sidebar.collapsed .lang-selector {
+    justify-content: center;
+}
+.sidebar.collapsed .lang-selector label {
+    margin-right: 0;
 }
 
 .brand {
@@ -2302,7 +2329,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
     }
     .plot-container {
         height: auto;
-        min-height: 60vh;
+        min-height: 50vh;
+    }
+    .plot-card {
+        min-height: 50vh;
     }
     .chat-agent-layout {
         height: 70vh;
