@@ -2263,3 +2263,71 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .route-tag .route-icon {
     font-size: 12px;
 }
+
+/* ====================================================================
+   RESPONSIVE DESIGN (iPad / Mobile First adjustments)
+   ==================================================================== */
+
+@media (max-width: 1024px) {
+    /* iPad Portrait / Small Tablets */
+    .app-container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+    .sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 168, 255, 0.12);
+        padding: 15px 20px;
+    }
+    .nav-menu {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .nav-item {
+        flex: 1 1 calc(50% - 10px);
+        margin-bottom: 0;
+        text-align: center;
+        justify-content: center;
+    }
+    .main-content {
+        height: auto;
+        padding: 15px;
+    }
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .plot-container {
+        height: auto;
+        min-height: 60vh;
+    }
+    .chat-agent-layout {
+        height: 70vh;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Mobile Devices */
+    .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .nav-item {
+        flex: 1 1 100%;
+    }
+    .chat-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .chat-input-bar {
+        flex-direction: column;
+    }
+    .btn-send {
+        width: 100%;
+        padding: 15px;
+    }
+}
