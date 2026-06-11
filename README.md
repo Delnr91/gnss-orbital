@@ -1,99 +1,107 @@
-# APEX-1 Space Agent & Orbital Dynamics Simulator
+<div align="center">
+  <img src="docs/assets/banner.png" alt="APEX-1 Space Agent & Orbital Simulator" width="100%">
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Python](https://img.shields.io/badge/python-3.10%2B-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688.svg)
-![JavaScript](https://img.shields.io/badge/javascript-ES6%2B-yellow)
-![Three.js](https://img.shields.io/badge/three.js-WebGL-black)
+  <h1>🌌 APEX-1 : Orbital Dynamics & Space AI </h1>
 
-**Built by [Lattice Startup](https://lattices.cl)** | **Creator:** [LinkedIn/delnr91](https://www.linkedin.com/in/delnr91)
+  **Next-Generation Multi-Agent Architecture for Satellite Mission Control**
 
-[EN English](#english) | [ES Espanol](#espanol) | [ZH Zhongwen](#zhongwen)
+  [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](LICENSE)
+  [![Python](https://img.shields.io/badge/python-3.10%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+  [![FastAPI](https://img.shields.io/badge/FastAPI-009688.svg?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+  [![WebGL](https://img.shields.io/badge/WebGL-Three.js-black?style=for-the-badge&logo=three.js&logoColor=white)](https://threejs.org/)
+
+  **Built by [Lattice Startup](https://lattices.cl) | Architect: [delnr91](https://www.linkedin.com/in/delnr91)**
+
+  🌍 **Languages:** [English (Active)](#) | [🇪🇸 Español](README.es.md) | [🇨🇳 中文](README.zh.md)
+
+</div>
 
 ---
 
-## <a name="english"></a> [EN] English
+## 🚀 Mission Overview
 
-### Overview
-**APEX-1** is a high-performance, open-source astrodynamics software suite and WebGL simulator designed for the modern era of space exploration. It seamlessly integrates a Python (FastAPI) backend for complex Keplerian mathematics with a highly responsive, glassmorphism-styled frontend.
+**APEX-1** is a high-performance, open-source astrodynamics software suite designed for the modern era of space exploration. Engineered at the intersection of orbital mechanics and artificial intelligence, APEX-1 seamlessly integrates a **Python (FastAPI) mathematical backend** with a **highly responsive WebGL frontend** styled with advanced glassmorphism.
 
-### Features
-* **3D WebGL Simulator:** Real-time visualization of Low Earth Orbit (LEO), Medium Earth Orbit (MEO), Geostationary (GEO), and Highly Elliptical Orbits (HEO).
-* **Multi-Orbit View:** Visualize all constellations simultaneously.
-* **Space Agent AI:** Interactive holographic UI with dynamic frequency visualizer.
-* **Agent-First Architecture:** Built on a Builder/Operator multi-agent design pattern.
+Whether you are simulating the IRIS² European hybrid constellation, analyzing orbital decay, or commanding the Space AI Agent to solve Kepler's Equation, APEX-1 provides a unified, zero-latency operations deck.
 
-### Deployment Architecture
-This project is built as a decoupled Full Stack microservice architecture:
-* **Frontend:** Deployed on **Vercel** (Global Edge Network).
-* **Backend:** Deployed on **Render** using a native Docker container to serve the FastAPI application.
+---
 
-### Support the Project
-This project is open-source and built by Lattice Startup. If you want to support aerospace innovation and help cover the backend server costs, consider donating:
+## 🛰️ Core Capabilities
 
-**Binance USDT (Network: TRC20)**
-Double-click the address below to copy:
+| Module | Description | Tech Stack |
+| :--- | :--- | :--- |
+| **Interactive 3D Simulator** | Real-time WebGL rendering of Low Earth Orbit (LEO), Medium Earth Orbit (MEO), Geostationary (GEO), and Highly Elliptical Orbits (HEO). | Three.js, Canvas API |
+| **Conversational Space Agent** | Holographic UI with a dynamic frequency visualizer. Implements a multi-agent routing system for tactical orbital queries. | Vercel Edge, OpenAI Ready |
+| **Jupyter Research Deck** | Live Jupyter Lab integration utilizing Newton-Raphson solvers and interactive Python widgets for advanced parameter manipulation. | Jupyter, Plotly, NumPy |
+| **Agent-First Architecture** | Built on a Builder/Operator multi-agent design pattern, separating mission planning from telemetry execution. | FastAPI, AsyncIO |
+
+---
+
+## 🏗️ Deployment Architecture
+
+APEX-1 leverages a decoupled microservices architecture designed for extreme scalability and planetary-scale edge delivery:
+
+```mermaid
+graph TD
+    User([Mission Operator]) -->|HTTPS Request| Frontend
+    
+    subgraph Global Edge Network
+        Frontend[Vercel Frontend]
+        UI[Glassmorphism UI]
+        WebGL[Three.js Engine]
+        Frontend --- UI
+        Frontend --- WebGL
+    end
+
+    subgraph Deep Space Backend
+        API[Render Cloud Docker]
+        FastAPI[Python 3.12 FastAPI]
+        Agent[APEX-1 AI Node]
+        API --- FastAPI
+        API --- Agent
+    end
+
+    Frontend <-->|REST API / JSON| API
+```
+
+* **Frontend:** Deployed on **Vercel** for millisecond global edge delivery.
+* **Backend:** Containerized via Docker and served 24/7 on **Render**.
+
+---
+
+## 🔧 Installation & Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Delnr91/gnss-orbital.git
+   cd gnss-orbital
+   ```
+
+2. **Start the local Research Deck (Jupyter Lab):**
+   ```bash
+   jupyter lab --no-browser --NotebookApp.token=''
+   ```
+
+3. **Deploy the Frontend Locally:**
+   Use any local web server to serve the `frontend/` directory (e.g., Live Server or `python -m http.server 3000`).
+
+---
+
+## 💡 Support Aerospace Innovation
+
+APEX-1 is 100% open-source and relies on community support to keep the backend AI servers running. If this project assisted your research or academic studies, consider fueling the mission:
+
+### 🪙 Binance USDT (Network: TRC20)
+Double-click the address below to copy instantly:
 ```text
 TQs4zW7dCTCmCPWG7TYCUAbtag9kphR4AG
 ```
-*(You can also scan the QR code below using your Binance mobile app)*
-<br>
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TQs4zW7dCTCmCPWG7TYCUAbtag9kphR4AG" width="150" alt="Donate QR Code">
+*(Or scan the QR code below using your Binance mobile app)*
+
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TQs4zW7dCTCmCPWG7TYCUAbtag9kphR4AG" width="150" alt="Donate QR Code" style="border-radius: 10px; border: 2px solid #00f3ff;">
 
 ---
-
-## <a name="espanol"></a> [ES] Espanol
-
-### Descripcion General
-**APEX-1** es una suite de software de astrodinamica y un simulador WebGL de alto rendimiento. Integra a la perfeccion un backend en Python (FastAPI) con un frontend interactivo basado en *glassmorphism*.
-
-### Caracteristicas
-* **Simulador 3D WebGL:** Visualizacion en tiempo real de orbitas LEO, MEO, GEO y HEO (Molniya).
-* **Vista Multi-Orbita:** Visualiza todas las constelaciones simultaneamente.
-* **IA Espacial:** Interfaz holografica interactiva con visualizador dinamico de frecuencias.
-* **Arquitectura Basada en Agentes:** Disenado con un patron de multiples agentes (Constructor/Operador).
-
-### Arquitectura de Despliegue (Full Stack)
-Este proyecto esta desplegado en produccion dividiendo la carga de la siguiente manera:
-* **Frontend:** Desplegado en **Vercel** para entrega de contenido global en milisegundos.
-* **Backend:** Desplegado en **Render** usando un contenedor Docker para servir la API de Python 24/7.
-
-### Apoya el Proyecto
-Este proyecto es de codigo abierto y construido por Lattice Startup. Si deseas apoyar a la innovacion aeroespacial y ayudar a cubrir los costos del servidor, considera donar:
-
-**Binance USDT (Red: TRC20)**
-Haz doble clic en la direccion para copiarla rapidamente:
-```text
-TQs4zW7dCTCmCPWG7TYCUAbtag9kphR4AG
-```
-*(Tambien puedes escanear el codigo QR de abajo directamente desde tu app movil de Binance)*
-<br>
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TQs4zW7dCTCmCPWG7TYCUAbtag9kphR4AG" width="150" alt="Codigo QR Donacion">
-
----
-
-## <a name="zhongwen"></a> [ZH] 中文
-
-### 概述
-**APEX-1** 是一款高性能的开源天体动力学软件套件和 WebGL 模拟器。它将用于复杂开普勒数学的 Python 后端与高度响应的前端无缝集成。
-
-### 核心功能
-* **3D WebGL 模拟器：** 实时可视化近地轨道 (LEO)、中地球轨道 (MEO)、地球同步轨道 (GEO) 和大椭圆轨道 (HEO)。
-* **多轨道视图：** 同时可视化所有星座。
-* **太空智能体 AI：** 具有动态频率可视化器的交互式全息 UI。
-* **智能体优先架构：** 基于构建者/操作者多智能体设计模式构建。
-
-### 部署架构
-* **前端 (Frontend):** 部署在 **Vercel**。
-* **后端 (Backend):** 部署在 **Render** (Docker)。
-
-### 支持项目
-**USDT (TRC20 / Binance):**
-```text
-TQs4zW7dCTCmCPWG7TYCUAbtag9kphR4AG
-```
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TQs4zW7dCTCmCPWG7TYCUAbtag9kphR4AG" width="150" alt="QR Code">
-
----
-## License
-MIT License. Built by [Lattice Startup](https://lattices.cl). Copyright (c) 2026.
+<div align="center">
+  <i>"Ad Astra per Aspera"</i><br>
+  <b>MIT License. Copyright (c) 2026.</b>
+</div>
