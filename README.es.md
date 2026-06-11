@@ -87,6 +87,17 @@ graph TD
 
 ---
 
+## 🤝 Contribuciones
+
+¡Damos la bienvenida a contribuciones de astrodinámicos, desarrolladores frontend e ingenieros de IA!
+1. Haz un Fork del proyecto
+2. Crea tu rama de característica (`git checkout -b feature/CaracteristicaIncreible`)
+3. Haz commit de tus cambios (`git commit -m 'Agrega una CaracteristicaIncreible'`)
+4. Haz push a la rama (`git push origin feature/CaracteristicaIncreible`)
+5. Abre un Pull Request
+
+---
+
 ## 💡 Apoya la Innovación Aeroespacial
 
 APEX-1 es 100% de código abierto y depende del apoyo de la comunidad para mantener los servidores de IA en línea. Si este proyecto ha ayudado en tu investigación o estudios académicos, considera financiar la misión:

@@ -87,6 +87,17 @@ graph TD
 
 ---
 
+## 🤝 贡献指南
+
+我们欢迎天体动力学专家、前端开发者和人工智能工程师的参与！
+1. Fork 本项目
+2. 创建您的特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交您的更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送至分支 (`git push origin feature/AmazingFeature`)
+5. 开启一个 Pull Request
+
+---
+
 ## 💡 支持航空航天创新
 
 APEX-1 100% 开源，并依靠社区支持来维持后端人工智能服务器的运行。如果该项目对您的研究或学术研究有帮助，请考虑资助这项任务：

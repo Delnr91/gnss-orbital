@@ -87,6 +87,17 @@ graph TD
 
 ---
 
+## 🤝 Contributing
+
+We welcome contributions from astrodynamicists, frontend developers, and AI engineers! 
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
 ## 💡 Support Aerospace Innovation
 
 APEX-1 is 100% open-source and relies on community support to keep the backend AI servers running. If this project assisted your research or academic studies, consider fueling the mission:
