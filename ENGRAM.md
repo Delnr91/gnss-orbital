@@ -89,6 +89,27 @@ gamificación local, notebooks 01-03, docs trilingües en `docs/`. Frontend "Aca
 - Bug sutil cazado: `const AgentNetwork` no crea `window.AgentNetwork` → binding
   explícito al final de `agents.js`.
 
+### Fase 4 — El Universo Vivo (2026-06-11)
+- **Tierra blue-marble**: se retiró el filtro grayscale. Decisión de diseño documentada:
+  *el chrome de la UI se queda muted (Palantir slate), el CONTENIDO — el planeta — va a
+  todo color*; ese contraste es la mejor práctica de los mission displays. Texturas NASA
+  (color + relieve normal + especular oceánico + capa de nubes independiente rotando),
+  limbo atmosférico con shader fresnel azul, rig de luz de dos fuentes (sol cálido +
+  relleno frío espacial).
+- **Universo bio-IA de fondo**: capa "plexo" — 46 células bioluminiscentes errantes que
+  crean y disuelven enlaces sinápticos por proximidad, con latido (heartbeat) global.
+  Conviven con estrellas parallax, nebulosas y fugaces. El proyecto *se siente vivo*.
+- **Organismo más presente**: bug encontrado — el `backdrop-filter: blur(18px)` de la
+  regla base seguía difuminando al orbe tras el chat; anulado con `backdrop-filter: none`
+  (la legibilidad ahora viene del fondo sólido de cada burbuja). Estado idle más
+  enérgico, micro-pulsos espontáneos cada 2.6-6.4 s, deriva bacteriana lissajous,
+  brillo/saturación del canvas subidos.
+- **Lógica Jupyter ops-grade**: click en OPEN NOTEBOOK sin kernel ya no abre pestañas
+  muertas → status "KERNEL REQUIRED", panel del comando parpadea en ámbar, y un
+  auto-poll de 4 s conecta y embebe JupyterLab en cuanto el operador lo lanza.
+- Nota operativa: si `preview_screenshot` se cuelga con la página viva, reiniciar el
+  servidor de preview (es el pipeline de captura, no la app).
+
 ---
 
 ## Arquitectura y patrones (mapa rápido)
@@ -146,4 +167,4 @@ Patrones: **Strategy** (propagadores), **Registry** (Locale, manifest de agentes
 - El simulador JS duplica fórmulas de `kepler.py` (decisión consciente, ver Principio 2)
   — si se toca la física, tocar AMBOS lados.
 
-> **Última actualización**: 2026-06-11 · Fase 3 completada.
+> **Última actualización**: 2026-06-11 · Fase 4 completada.

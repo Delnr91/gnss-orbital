@@ -120,14 +120,14 @@
     // ------------------------------------------------------------------
     const STATES = {
         idle: {
-            amplitude: 0.10, frequency: 1.6, speed: 0.35, glow: 0.9,
-            colorA: [0.08, 0.16, 0.24], colorB: [0.35, 0.78, 0.88],
-            ringEnergy: 0.10, rotation: 0.0015
+            amplitude: 0.17, frequency: 2.0, speed: 0.65, glow: 1.35,
+            colorA: [0.10, 0.22, 0.30], colorB: [0.45, 0.92, 1.0],
+            ringEnergy: 0.26, rotation: 0.0026
         },
         listening: {
-            amplitude: 0.16, frequency: 2.1, speed: 0.7, glow: 1.25,
-            colorA: [0.07, 0.20, 0.28], colorB: [0.42, 0.88, 0.96],
-            ringEnergy: 0.28, rotation: 0.003
+            amplitude: 0.22, frequency: 2.3, speed: 0.9, glow: 1.5,
+            colorA: [0.09, 0.24, 0.32], colorB: [0.5, 0.95, 1.0],
+            ringEnergy: 0.38, rotation: 0.004
         },
         thinking: {
             amplitude: 0.30, frequency: 3.4, speed: 2.3, glow: 1.5,
@@ -151,6 +151,7 @@
     let currentState = "idle";
     let emotion = null;          // active emotion overlay (e.g. "happy")
     let emotionStart = 0;
+    let nextMicroPulse = 0;      // spontaneous life: the organism twitches on its own
     let scene, camera, renderer, orbMesh, haloMesh, uniforms, haloUniforms;
     let freqCanvas, freqCtx;
     let container;
@@ -351,12 +352,26 @@
         orbMesh.rotation.y += live.rotation;
         orbMesh.rotation.z += live.rotation * 0.4;
 
-        // Always alive: gentle buoyant bobbing + squash & stretch from emotions
-        const bob = Math.sin(ts / 1000 * 0.9) * 0.045;
-        orbMesh.position.y = bob;
-        haloMesh.position.y = bob;
+        // Always alive: buoyant bobbing + slow bacterial wander (lissajous
+        // drift, like a microorganism swimming in place) + emotion scaling
+        const tSec = ts / 1000;
+        const bob = Math.sin(tSec * 0.9) * 0.05;
+        const wanderX = Math.sin(tSec * 0.21) * 0.07 + Math.sin(tSec * 0.47) * 0.03;
+        const wanderY = Math.cos(tSec * 0.17) * 0.05;
+        orbMesh.position.set(wanderX, bob + wanderY, 0);
+        haloMesh.position.copy(orbMesh.position);
         orbMesh.scale.set(scaleX, scaleY, scaleZ);
         haloMesh.scale.set(scaleX, scaleY, scaleZ);
+
+        // Spontaneous twitches: every few seconds the organism flinches,
+        // sends a ripple through its ring, never sits perfectly still
+        if (ts > nextMicroPulse) {
+            nextMicroPulse = ts + 2600 + Math.random() * 3800;
+            if (currentState === "idle" || currentState === "listening") {
+                pulses.push({ r: 0, alpha: 0.45 });
+                live.amplitude = Math.min(live.amplitude + 0.08, 0.5);
+            }
+        }
 
         // Lean toward the cursor
         const targetRotX = pointer.y * 0.25;

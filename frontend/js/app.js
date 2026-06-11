@@ -73,6 +73,7 @@ const translations = {
         "jupyter.copy": "COPY",
         "jupyter.copied": "COPIED ✓",
         "jupyter.offline_hint": "No JupyterLab server detected on port 8888. Launch it from the project root:",
+        "jupyter.need_kernel": "⚠ KERNEL REQUIRED — RUN THE COMMAND BELOW, AUTO-CONNECT IS WATCHING",
         "jupyter.back": "CONSOLE",
         "jupyter.external": "OPEN IN TAB ↗",
         "jupyter.open": "OPEN NOTEBOOK",
@@ -151,6 +152,7 @@ const translations = {
         "jupyter.copy": "COPIAR",
         "jupyter.copied": "COPIADO ✓",
         "jupyter.offline_hint": "No se detectó servidor JupyterLab en el puerto 8888. Inícialo desde la raíz del proyecto:",
+        "jupyter.need_kernel": "⚠ KERNEL REQUERIDO — EJECUTA EL COMANDO DE ABAJO, LA AUTO-CONEXIÓN ESTÁ VIGILANDO",
         "jupyter.back": "CONSOLA",
         "jupyter.external": "ABRIR EN PESTAÑA ↗",
         "jupyter.open": "ABRIR CUADERNO",
@@ -229,6 +231,7 @@ const translations = {
         "jupyter.copy": "复制",
         "jupyter.copied": "已复制 ✓",
         "jupyter.offline_hint": "未在 8888 端口检测到 JupyterLab 服务器。请在项目根目录启动：",
+        "jupyter.need_kernel": "⚠ 需要内核 — 请运行下方命令，系统正在自动监测连接",
         "jupyter.back": "控制台",
         "jupyter.external": "在新标签页打开 ↗",
         "jupyter.open": "打开笔记本",
@@ -268,7 +271,7 @@ let currentLang = "en";
 
 // Three.js Global Objects for Simulator
 let scene, camera, renderer, controls;
-let earthMesh, earthWireframe, atmosphere;
+let earthMesh, earthWireframe, atmosphere, cloudMesh;
 let orbitLine, commBeam;
 let satelliteMesh;
 let orbitalParams = { a: 7000, e: 0.01, i: 51.6, raan: 0, argp: 0 };
@@ -368,6 +371,7 @@ let bgStarLayers = [];
 let bgNebulae = [];
 let bgShootingStars = [];
 let bgLastShootingStar = 0;
+let bgPlexus = null;          // the living bio-digital tissue layer
 
 // Soft radial-gradient sprite texture used for nebula clouds
 function makeNebulaTexture(r, g, b) {
@@ -454,6 +458,10 @@ function initBackgroundThreeJS() {
         bgNebulae.push(sprite);
     }
 
+    // Bio-digital plexus: a colony of wandering luminous cells that grow
+    // and dissolve synaptic links — the universe itself feels alive
+    initBgPlexus();
+
     // Track mouse movement for magnetic parallax effect
     window.addEventListener("mousemove", (e) => {
         mouseX = (e.clientX - window.innerWidth / 2) * 0.22;
@@ -467,6 +475,103 @@ function initBackgroundThreeJS() {
     });
 
     animateBackground();
+}
+
+function initBgPlexus() {
+    const N = 46;
+    const BOUNDS = { x: 1500, y: 950, z: 350 };
+    const nodes = [];
+    for (let i = 0; i < N; i++) {
+        nodes.push({
+            pos: new THREE.Vector3(
+                (Math.random() - 0.5) * 2 * BOUNDS.x,
+                (Math.random() - 0.5) * 2 * BOUNDS.y,
+                -150 - Math.random() * BOUNDS.z
+            ),
+            vel: new THREE.Vector3(
+                (Math.random() - 0.5) * 0.5,
+                (Math.random() - 0.5) * 0.35,
+                (Math.random() - 0.5) * 0.1
+            ),
+            phase: Math.random() * Math.PI * 2
+        });
+    }
+
+    // Cell bodies: soft bioluminescent points
+    const cellGeo = new THREE.BufferGeometry();
+    cellGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(N * 3), 3));
+    const cellMat = new THREE.PointsMaterial({
+        color: 0x57e6c9,
+        size: 7,
+        transparent: true,
+        opacity: 0.5,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+    const cells = new THREE.Points(cellGeo, cellMat);
+    bgScene.add(cells);
+
+    // Synapses: preallocated line buffer with per-vertex fading colors
+    const MAX_LINKS = 260;
+    const lineGeo = new THREE.BufferGeometry();
+    lineGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(MAX_LINKS * 6), 3));
+    lineGeo.setAttribute("color", new THREE.BufferAttribute(new Float32Array(MAX_LINKS * 6), 3));
+    const lineMat = new THREE.LineBasicMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.55,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+    const links = new THREE.LineSegments(lineGeo, lineMat);
+    bgScene.add(links);
+
+    bgPlexus = { nodes, cells, links, BOUNDS, MAX_LINKS, LINK_DIST: 300 };
+}
+
+function updateBgPlexus(t) {
+    if (!bgPlexus) return;
+    const { nodes, cells, links, BOUNDS, MAX_LINKS, LINK_DIST } = bgPlexus;
+
+    // Wander: organic drift with a heartbeat-like micro jitter
+    const cellPos = cells.geometry.attributes.position.array;
+    nodes.forEach((n, i) => {
+        n.vel.x += Math.sin(t * 0.4 + n.phase) * 0.004;
+        n.vel.y += Math.cos(t * 0.33 + n.phase * 1.7) * 0.003;
+        n.pos.add(n.vel);
+        if (Math.abs(n.pos.x) > BOUNDS.x) n.vel.x *= -1;
+        if (Math.abs(n.pos.y) > BOUNDS.y) n.vel.y *= -1;
+        if (n.pos.z > -100 || n.pos.z < -150 - BOUNDS.z) n.vel.z *= -1;
+        cellPos[i * 3] = n.pos.x;
+        cellPos[i * 3 + 1] = n.pos.y;
+        cellPos[i * 3 + 2] = n.pos.z;
+    });
+    cells.geometry.attributes.position.needsUpdate = true;
+    cells.material.opacity = 0.35 + 0.2 * Math.sin(t * 0.9);
+    cells.material.size = 6 + 2.2 * Math.sin(t * 0.7);
+
+    // Grow/dissolve synaptic links by proximity; brightness = closeness
+    const lp = links.geometry.attributes.position.array;
+    const lc = links.geometry.attributes.color.array;
+    let li = 0;
+    const heartbeat = 0.6 + 0.4 * Math.sin(t * 1.3);
+    for (let i = 0; i < nodes.length && li < MAX_LINKS; i++) {
+        for (let j = i + 1; j < nodes.length && li < MAX_LINKS; j++) {
+            const d = nodes[i].pos.distanceTo(nodes[j].pos);
+            if (d < LINK_DIST) {
+                const w = (1 - d / LINK_DIST) * heartbeat;
+                const o = li * 6;
+                lp[o] = nodes[i].pos.x; lp[o + 1] = nodes[i].pos.y; lp[o + 2] = nodes[i].pos.z;
+                lp[o + 3] = nodes[j].pos.x; lp[o + 4] = nodes[j].pos.y; lp[o + 5] = nodes[j].pos.z;
+                lc[o] = 0.18 * w; lc[o + 1] = 0.85 * w; lc[o + 2] = 0.72 * w;
+                lc[o + 3] = 0.25 * w; lc[o + 4] = 0.6 * w; lc[o + 5] = 0.85 * w;
+                li++;
+            }
+        }
+    }
+    links.geometry.setDrawRange(0, li * 2);
+    links.geometry.attributes.position.needsUpdate = true;
+    links.geometry.attributes.color.needsUpdate = true;
 }
 
 function spawnShootingStar() {
@@ -504,6 +609,9 @@ function animateBackground() {
         layer.rotation.x += layer.userData.drift * 0.3;
         layer.material.opacity = layer.userData.baseOpacity * (0.82 + 0.18 * Math.sin(t * 1.7 + layer.userData.phase));
     });
+
+    // The living tissue layer
+    updateBgPlexus(t);
 
     // Nebulae drift and breathe
     bgNebulae.forEach((n) => {
@@ -666,13 +774,13 @@ function initThreeJS() {
     controls.maxDistance = 280000;
     controls.minDistance = 8000;
     
-    // Ambient light
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
+    // Lighting: one warm Sun + faint cool space fill (cinema-standard
+    // two-light rig for planets: day side warm, night side barely lifted)
+    const ambientLight = new THREE.AmbientLight(0x223344, 0.55);
     scene.add(ambientLight);
-    
-    // Directional solar light
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.95);
-    dirLight.position.set(1, 0.6, 1).normalize();
+
+    const dirLight = new THREE.DirectionalLight(0xfff2e0, 1.35);
+    dirLight.position.set(1, 0.4, 0.8).normalize();
     scene.add(dirLight);
     
     // Deep Space Starfield Backdrop inside plot
@@ -693,12 +801,16 @@ function initThreeJS() {
     const starfield = new THREE.Points(starsGeo, starsMat);
     scene.add(starfield);
     
-    // Earth Solid Sphere (Base Material)
-    const earthGeo = new THREE.SphereGeometry(EARTH_RADIUS, 32, 32);
+    // Earth Solid Sphere — NASA blue-marble setup.
+    // Best practice: the UI chrome stays muted (Palantir slate), but the
+    // CONTENT — the planet — is rendered in full color: that contrast is
+    // what makes mission displays read instantly.
+    const earthGeo = new THREE.SphereGeometry(EARTH_RADIUS, 64, 64);
     const earthMat = new THREE.MeshPhongMaterial({
-        color: 0x050c22,
-        emissive: 0x01030d,
-        shininess: 25
+        color: 0x1b2a45,        // deep ocean fallback until textures stream in
+        emissive: 0x060c18,
+        shininess: 18,
+        specular: new THREE.Color(0x333333)
     });
     
     // The Moon Setup
@@ -709,50 +821,49 @@ function initThreeJS() {
     moonMesh.position.set(384400, 0, 0); 
     scene.add(moonMesh);
 
-    // Load NASA photorealistic Earth texture map and apply Palantir Grayscale filter
+    // Stream NASA-derived planetary textures (color map, terrain relief,
+    // ocean specular, rolling cloud deck) — full blue-marble treatment.
     const textureLoader = new THREE.TextureLoader();
-    
+    const PLANET_TEX = 'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/';
+
     // Load Moon Texture
-    textureLoader.load(
-        'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/moon_1024.jpg',
-        (texture) => {
-            moonMat.map = texture;
-            moonMat.color.setHex(0xffffff); // Reset base color so texture shines through
-            moonMat.needsUpdate = true;
-        }
-    );
-    textureLoader.load(
-        'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg',
-        (texture) => {
-            const img = texture.image;
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const data = imgData.data;
-            for (let i = 0; i < data.length; i += 4) {
-                const avg = 0.2126 * data[i] + 0.7152 * data[i+1] + 0.0722 * data[i+2];
-                const contrast = (avg > 128) ? avg * 1.1 : avg * 0.9;
-                data[i] = contrast;
-                data[i+1] = contrast;
-                data[i+2] = contrast;
-            }
-            ctx.putImageData(imgData, 0, 0);
-            
-            const bwTexture = new THREE.CanvasTexture(canvas);
-            earthMat.map = bwTexture;
-            earthMat.color.setHex(0xffffff);
-            earthMat.emissive.setHex(0x111111);
-            earthMat.needsUpdate = true;
-        },
-        null,
-        (error) => {
-            console.log("Earth texture failed to load, keeping fallback.");
-        }
-    );
+    textureLoader.load(PLANET_TEX + 'moon_1024.jpg', (texture) => {
+        moonMat.map = texture;
+        moonMat.color.setHex(0xffffff); // Reset base color so texture shines through
+        moonMat.needsUpdate = true;
+    });
+
+    textureLoader.load(PLANET_TEX + 'earth_atmos_2048.jpg', (texture) => {
+        earthMat.map = texture;
+        earthMat.color.setHex(0xffffff);
+        earthMat.emissive.setHex(0x0a0f1a);
+        earthMat.needsUpdate = true;
+    }, null, () => console.log("Earth texture failed to load, keeping fallback."));
+
+    // Terrain relief so mountain ranges catch the sunlight
+    textureLoader.load(PLANET_TEX + 'earth_normal_2048.jpg', (texture) => {
+        earthMat.normalMap = texture;
+        earthMat.normalScale = new THREE.Vector2(0.8, 0.8);
+        earthMat.needsUpdate = true;
+    });
+
+    // Oceans glint, continents stay matte
+    textureLoader.load(PLANET_TEX + 'earth_specular_2048.jpg', (texture) => {
+        earthMat.specularMap = texture;
+        earthMat.needsUpdate = true;
+    });
+
+    // Independent rolling cloud deck slightly above the surface
+    textureLoader.load(PLANET_TEX + 'earth_clouds_1024.png', (texture) => {
+        const cloudMat = new THREE.MeshLambertMaterial({
+            map: texture,
+            transparent: true,
+            opacity: 0.55,
+            depthWrite: false
+        });
+        cloudMesh = new THREE.Mesh(new THREE.SphereGeometry(EARTH_RADIUS * 1.012, 64, 64), cloudMat);
+        scene.add(cloudMesh);
+    });
     
     // Add Raycaster Click Event Listener
     container.addEventListener('pointerdown', (e) => {
@@ -775,25 +886,49 @@ function initThreeJS() {
     earthMesh = new THREE.Mesh(earthGeo, earthMat);
     scene.add(earthMesh);
     
-    // Earth Glowing Cyber Grid Overlay
+    // Faint tactical grid overlay (kept subtle so the blue marble leads)
     const gridMat = new THREE.MeshBasicMaterial({
-        color: 0x555555,
+        color: 0x4a708c,
         wireframe: true,
         transparent: true,
-        opacity: 0.16
+        opacity: 0.07
     });
     earthWireframe = new THREE.Mesh(earthGeo, gridMat);
+    earthWireframe.scale.setScalar(1.002);
     scene.add(earthWireframe);
-    
-    // Outer Atmosphere Glow Ring Envelope
-    const atmosGeo = new THREE.SphereGeometry(EARTH_RADIUS + 250, 32, 32);
-    const atmosMat = new THREE.MeshBasicMaterial({
-        color: 0x222222,
+
+    // Atmospheric limb: fresnel rim scattering, the blue halo every
+    // astronaut photo shows at the horizon
+    const atmosMat = new THREE.ShaderMaterial({
+        uniforms: {
+            uColor: { value: new THREE.Color(0x4d9ce8) },
+            uIntensity: { value: 1.1 }
+        },
+        vertexShader: `
+            varying vec3 vNormalW;
+            varying vec3 vPositionW;
+            void main() {
+                vNormalW = normalize(normalMatrix * normal);
+                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                vPositionW = mvPosition.xyz;
+                gl_Position = projectionMatrix * mvPosition;
+            }`,
+        fragmentShader: `
+            uniform vec3 uColor;
+            uniform float uIntensity;
+            varying vec3 vNormalW;
+            varying vec3 vPositionW;
+            void main() {
+                vec3 viewDir = normalize(-vPositionW);
+                float rim = pow(1.0 - abs(dot(viewDir, normalize(vNormalW))), 3.5);
+                gl_FragColor = vec4(uColor, rim * uIntensity);
+            }`,
+        side: THREE.BackSide,
         transparent: true,
-        opacity: 0.08,
-        side: THREE.BackSide
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
     });
-    atmosphere = new THREE.Mesh(atmosGeo, atmosMat);
+    atmosphere = new THREE.Mesh(new THREE.SphereGeometry(EARTH_RADIUS * 1.045, 64, 64), atmosMat);
     scene.add(atmosphere);
     
     // Reference Equator Plane Ring
@@ -866,6 +1001,11 @@ function animate() {
     }
     if (earthMesh) {
         earthMesh.rotation.y += 0.0002;
+    }
+    // Clouds drift independently — the planet visibly *weathers*
+    if (cloudMesh) {
+        cloudMesh.rotation.y += 0.00031;
+        cloudMesh.rotation.x = Math.sin(performance.now() / 90000) * 0.01;
     }
     
     // Propagate satellite along trajectory
@@ -1369,6 +1509,7 @@ document.querySelectorAll(".nav-item").forEach(btn => {
 
         if (tab === "jupyter") {
             checkJupyterStatus();
+            startJupyterPolling();
         }
     });
 });
@@ -1668,9 +1809,39 @@ function openNotebook(nb) {
         document.getElementById("jupyter-launcher").classList.add("hidden");
         document.getElementById("jupyter-embed").classList.remove("hidden");
     } else {
-        // No local kernel: open in a tab anyway in case the server runs elsewhere
-        window.open(url, "_blank", "noopener");
+        // No kernel: opening a dead tab helps nobody. Mission-control rule:
+        // tell the operator exactly what to run, then auto-connect for them.
+        const dict = translations[currentLang];
+        const text = document.getElementById("jupyter-status-text");
+        if (text) text.innerText = dict["jupyter.need_kernel"] || "KERNEL REQUIRED — RUN THE COMMAND BELOW";
+
+        const help = document.getElementById("jupyter-offline-help");
+        if (help) {
+            help.classList.remove("hidden");
+            help.classList.remove("flash-attention");
+            void help.offsetWidth; // restart the CSS animation
+            help.classList.add("flash-attention");
+            help.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        startJupyterPolling();
     }
+}
+
+// Ops-grade auto-connect: while the console tab is open and the kernel is
+// down, probe every 4 s; the moment JupyterLab comes up the status flips
+// green and OPEN NOTEBOOK embeds it — no manual rescan needed.
+let jupyterPollTimer = null;
+function startJupyterPolling() {
+    if (jupyterPollTimer) return;
+    jupyterPollTimer = setInterval(() => {
+        const pane = document.getElementById("tab-jupyter");
+        if (!pane || !pane.classList.contains("active") || jupyterOnline) {
+            clearInterval(jupyterPollTimer);
+            jupyterPollTimer = null;
+            return;
+        }
+        checkJupyterStatus();
+    }, 4000);
 }
 
 function initJupyterConsole() {

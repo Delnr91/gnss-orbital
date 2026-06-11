@@ -1796,7 +1796,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 #orb-canvas {
     width: 70% !important;
     height: 70% !important;
-    filter: saturate(1.15);
+    filter: saturate(1.35) brightness(1.18);
 }
 
 /* Identity: the name letters materialize one by one and keep breathing */
@@ -1996,6 +1996,16 @@ input[type="range"]::-webkit-slider-thumb:hover {
     margin-bottom: 18px;
     font-size: 13px;
     color: var(--text-secondary);
+}
+
+/* Attention flash when the operator clicks OPEN NOTEBOOK without a kernel */
+.jupyter-offline-help.flash-attention {
+    animation: kernel-flash 1.6s ease;
+}
+
+@keyframes kernel-flash {
+    0%, 100% { border-color: rgba(240, 180, 41, 0.25); box-shadow: none; }
+    20%, 60% { border-color: rgba(240, 180, 41, 0.9); box-shadow: 0 0 22px rgba(240, 180, 41, 0.35); }
 }
 
 .command-copy-row {
@@ -2209,16 +2219,21 @@ input[type="range"]::-webkit-slider-thumb:hover {
     padding-bottom: 6px;
 }
 
+/* No backdrop blur here: the organism behind must stay crisp and alive.
+   Readability comes from the bubbles' own solid backgrounds instead. */
 .agent-chat-full .chat-history {
-    background: rgba(4, 7, 13, 0.38);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border-color: rgba(124, 160, 196, 0.10);
+    background: rgba(4, 7, 13, 0.14);
+    border-color: rgba(124, 160, 196, 0.08);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 }
 
-.agent-chat-full .chat-bubble .bubble-content {
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+.agent-chat-full .chat-bubble.bot .bubble-content {
+    background: rgba(5, 11, 22, 0.88);
+}
+
+.agent-chat-full .chat-bubble.user .bubble-content {
+    background: rgba(13, 7, 24, 0.88);
 }
 
 .agent-chat-full .chat-input-bar input {
