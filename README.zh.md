@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/assets/banner.png" alt="APEX-1 空间智能体与轨道模拟器" width="100%">
+  <img src="docs/assets/banner.png" alt="APEX-1 空间智能体与轨道模拟器" width="700">
 
   <h1>🌌 APEX-1 : 轨道动力学与太空人工智能 </h1>
 

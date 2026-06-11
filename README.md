@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/assets/banner.png" alt="APEX-1 Space Agent & Orbital Simulator" width="100%">
+  <img src="docs/assets/banner.png" alt="APEX-1 Space Agent & Orbital Simulator" width="700">
 
   <h1>🌌 APEX-1 : Orbital Dynamics & Space AI </h1>
 
