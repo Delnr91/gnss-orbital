@@ -59,6 +59,7 @@ const translations = {
         "topics.2": "Explain Kepler's Laws",
         "topics.3": "How does GPS work?",
         "topics.4": "Show Vis-Viva equation",
+        "topics.5": "How to bypass Jupyter password?",
         "agent.status.online": "CORE ONLINE",
         "agent.status.listening": "LISTENING",
         "agent.status.thinking": "PROCESSING QUERY",
@@ -138,6 +139,7 @@ const translations = {
         "topics.2": "Explica las Leyes de Kepler",
         "topics.3": "¿Cómo funciona el GPS?",
         "topics.4": "Ecuación Vis-Viva",
+        "topics.5": "¿Cómo evitar la contraseña de Jupyter?",
         "agent.status.online": "NÚCLEO EN LÍNEA",
         "agent.status.listening": "ESCUCHANDO",
         "agent.status.thinking": "PROCESANDO CONSULTA",
@@ -217,6 +219,7 @@ const translations = {
         "topics.2": "解释开普勒定律",
         "topics.3": "GPS 是如何工作的？",
         "topics.4": "显示活力方程 (Vis-Viva)",
+        "topics.5": "如何跳过 Jupyter 密码？",
         "agent.status.online": "核心在线",
         "agent.status.listening": "正在聆听",
         "agent.status.thinking": "正在处理查询",
@@ -1535,7 +1538,7 @@ function renderSuggestionChips() {
     const container = document.getElementById("suggestion-chips");
     if (!container) return;
     container.innerHTML = "";
-    for (let i = 1; i <= 4; i++) {
+    for (let i = 1; i <= 5; i++) {
         const text = translations[currentLang][`topics.${i}`];
         if (text) {
             const chip = document.createElement("div");
