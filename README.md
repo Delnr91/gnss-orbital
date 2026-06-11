@@ -31,7 +31,7 @@ Whether you are simulating the IRIS² European hybrid constellation, analyzing o
 | Module | Description | Tech Stack |
 | :--- | :--- | :--- |
 | **Interactive 3D Simulator** | Real-time WebGL rendering of Low Earth Orbit (LEO), Medium Earth Orbit (MEO), Geostationary (GEO), and Highly Elliptical Orbits (HEO). | Three.js, Canvas API |
-| **Conversational Space Agent** | Holographic UI with a dynamic frequency visualizer. Implements a multi-agent routing system for tactical orbital queries. | Vercel Edge, OpenAI Ready |
+| **Conversational Space Agent** | Holographic UI with a dynamic frequency visualizer. Ships with a basic orbital context simulator. **Note:** For full intelligence, connect the backend to a free LLM like Gemini Flash 1.5 or local Ollama. | Vercel Edge, AI Ready |
 | **Jupyter Research Deck** | Live Jupyter Lab integration utilizing Newton-Raphson solvers and interactive Python widgets for advanced parameter manipulation. | Jupyter, Plotly, NumPy |
 | **Agent-First Architecture** | Built on a Builder/Operator multi-agent design pattern, separating mission planning from telemetry execution. | FastAPI, AsyncIO |
 

@@ -31,7 +31,7 @@
 | 模块 | 描述 | 技术栈 |
 | :--- | :--- | :--- |
 | **交互式 3D 模拟器** | 实时 WebGL 渲染近地轨道 (LEO)、中地球轨道 (MEO)、地球同步轨道 (GEO) 和大椭圆轨道 (HEO)。 | Three.js, Canvas API |
-| **对话式太空智能体** | 带有动态频率可视化器的全息用户界面。实现用于战术轨道查询的多智能体路由系统。 | Vercel Edge, OpenAI Ready |
+| **对话式太空智能体** | 带有动态频率可视化器的全息用户界面。附带基本轨道上下文模拟器。**注意：** 如需获得完整的智能体验，请将后端连接到免费 LLM（如 Gemini Flash 1.5 或本地 Ollama）。 | Vercel Edge, AI Ready |
 | **Jupyter 研究控制台** | 使用 Newton-Raphson 求解器和交互式 Python 小部件进行高级参数操作的实时 Jupyter Lab 集成。 | Jupyter, Plotly, NumPy |
 | **智能体优先架构** | 基于构建者/操作者多智能体设计模式构建，将任务规划与遥测执行分离。 | FastAPI, AsyncIO |
 

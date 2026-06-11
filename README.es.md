@@ -31,7 +31,7 @@ Ya sea simulando la constelación híbrida europea IRIS², analizando el decaimi
 | Módulo | Descripción | Tecnología |
 | :--- | :--- | :--- |
 | **Simulador 3D Interactivo** | Renderizado en tiempo real (WebGL) de Órbitas Terrestres Bajas (LEO), Medias (MEO), Geoestacionarias (GEO) y Altamente Elípticas (HEO). | Three.js, Canvas API |
-| **Agente Espacial Conversacional** | Interfaz holográfica con visualizador dinámico de frecuencias. Implementa un sistema de enrutamiento multi-agente para consultas orbitales tácticas. | Vercel Edge, OpenAI Ready |
+| **Agente Espacial Conversacional** | Interfaz holográfica con visualizador dinámico. Viene con un simulador de contexto orbital básico. **Nota:** Para inteligencia completa, conecta el backend a un LLM gratuito como Gemini Flash 1.5 u Ollama local. | Vercel Edge, AI Ready |
 | **Consola de Investigación Jupyter** | Integración en vivo con Jupyter Lab utilizando el método numérico de Newton-Raphson y widgets interactivos de Python. | Jupyter, Plotly, NumPy |
 | **Arquitectura Multi-Agente** | Basado en el patrón de diseño Constructor/Operador, separando la planificación de misiones de la ejecución telemétrica. | FastAPI, AsyncIO |
 

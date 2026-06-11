@@ -1127,88 +1127,31 @@ function querySecondBrainAgent(userInput) {
     const query = userInput.toLowerCase().trim();
     if (!query) return null;
 
-    // Stage 1 — guard: reject queries outside the space domain
-    const isRelated = spaceKeywords.some(keyword => query.includes(keyword));
-    if (!isRelated) {
+    // Send the query directly to the APEX-1 Backend API
+    return fetch("https://gnss-orbital.onrender.com/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+            message: query,
+            language: currentLang
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
         return {
-            text: translations[currentLang]["teacher.offtopic"],
+            text: data.response,
+            doc: "APEX-1 Database",
+            agent: "Core Server"
+        };
+    })
+    .catch(error => {
+        console.error("Agent error:", error);
+        return {
+            text: translations[currentLang]["teacher.no_match"] || "SYSTEM ERROR: Backend connection failed.",
             doc: null,
             agent: null
         };
-    }
-
-    // Stage 2 — router: dispatch to the best specialist sub-agent shard
-    let routedAgent = null;
-    if (window.AgentNetwork && AgentNetwork.isReady()) {
-        const routed = AgentNetwork.route(query, currentLang);
-        if (routed && routed.section) {
-            return {
-                text: routed.section,
-                doc: routed.doc,
-                agent: routed.agent
-            };
-        }
-        if (routed && routed.agent) routedAgent = routed.agent; // weak shard: keep tag, escalate
-    }
-
-    // Stage 3 — fallback: flat search across the whole vault
-    const docs = vaultDocuments[currentLang];
-    let bestSection = null;
-    let bestScore = 0;
-    let sourceDoc = "";
-    
-    // Query tokenization (remove standard short stop words)
-    const stopWords = ["the", "a", "an", "and", "or", "but", "to", "of", "in", "on", "at", "for", "with", "el", "la", "los", "las", "un", "una", "y", "o", "de", "en", "para", "con", "的", "了", "和", "是", "在"];
-    const queryTokens = query.split(/[\s,\.\?\!\-\/\(\)]+/).filter(tok => tok.length > 1 && !stopWords.includes(tok));
-    
-    if (queryTokens.length === 0) {
-        queryTokens.push(query); // Fallback
-    }
-    
-    // Search files segment-by-segment (divided by markdown headers)
-    for (const [filename, content] of Object.entries(docs)) {
-        const sections = content.split(/(?=## )/g);
-        
-        sections.forEach(section => {
-            const headerMatch = section.match(/##\s*(.*)/);
-            const headerText = headerMatch ? headerMatch[1].toLowerCase() : "";
-            const bodyText = section.toLowerCase();
-            
-            let score = 0;
-            
-            queryTokens.forEach(token => {
-                // High weight for matching tokens in section headers
-                if (headerText.includes(token)) {
-                    score += 4.5;
-                }
-                // Standard weight for matching tokens in body text
-                if (bodyText.includes(token)) {
-                    const matchesCount = (bodyText.match(new RegExp(token.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g')) || []).length;
-                    score += Math.min(matchesCount, 3) * 1.0; // cap term frequency influence
-                }
-            });
-            
-            if (score > bestScore) {
-                bestScore = score;
-                bestSection = section;
-                sourceDoc = filename;
-            }
-        });
-    }
-    
-    if (bestScore > 1.2 && bestSection) {
-        return {
-            text: bestSection,
-            doc: sourceDoc,
-            agent: routedAgent
-        };
-    } else {
-        return {
-            text: translations[currentLang]["teacher.no_match"],
-            doc: null,
-            agent: null
-        };
-    }
+    });
 }
 
 
