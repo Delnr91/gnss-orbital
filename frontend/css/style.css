@@ -782,7 +782,9 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .chat-agent-layout {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 160px);
+    flex-grow: 1;
+    min-height: 0;
+    height: 100%;
     gap: 20px;
 }
 
