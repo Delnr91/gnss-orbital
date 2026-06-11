@@ -80,6 +80,15 @@ body {
 .app-container {
     display: flex;
     height: 100vh;
+    height: 100dvh;
+    /* Respect iPad/iPhone rounded corners, camera and home indicator.
+       The fixed background canvases stay full-bleed behind this; only the
+       foreground UI is inset, so nothing sits under a rounded edge and the
+       layout stays symmetric in landscape (the "few-cm off-center" fix). */
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* --- SIDEBAR NAV --- */
