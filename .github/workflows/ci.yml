@@ -24,7 +24,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install numpy pytest
+          # orbital/__init__ pulls visualization (plotly) and teacher (ipywidgets),
+          # so the runtime deps must be present for test collection to import the package.
+          pip install numpy plotly ipywidgets pytest
 
       - name: Run test suite
         run: python -m pytest tests/ -v
