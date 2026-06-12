@@ -2271,23 +2271,83 @@ input[type="range"]::-webkit-slider-thumb:hover {
     justify-content: center;
     z-index: 0;
     pointer-events: none;
+    /* Reserve the bottom tray (single-row chips + input bar) so the orb
+       and the APEX-1 wordmark always center in the space ABOVE it and
+       never collide with the suggestion chips, at any screen size. */
+    padding-bottom: 150px;
 }
 
 .agent-ambient #orb-container {
-    width: min(52vh, 480px);
-    height: min(52vh, 480px);
+    /* Cap by height AND width so the core never grows so tall on narrow
+       portrait screens that it shoves the wordmark into the chips. */
+    width: min(46vh, 72vw, 440px);
+    height: min(46vh, 72vw, 440px);
     pointer-events: auto; /* the organism still reacts to touch */
 }
 
+/* Mobile: the input bar stacks (taller), so reserve more bottom room and
+   shrink the core a touch to keep the orb + wordmark comfortably above. */
+@media (max-width: 768px) {
+    .agent-ambient {
+        padding-bottom: 235px;
+    }
+    .agent-ambient #orb-container {
+        width: min(38vh, 70vw, 360px);
+        height: min(38vh, 70vw, 360px);
+    }
+    .agent-ambient .agent-name {
+        font-size: 30px;
+        letter-spacing: 14px;
+        margin-left: 14px;
+    }
+}
+
 .agent-ambient .agent-identity {
-    margin-top: -10px;
-    opacity: 0.92;
+    margin-top: 4px;
+    opacity: 1;
 }
 
 .agent-ambient .agent-name {
     font-size: 38px;
     letter-spacing: 20px;
     margin-left: 20px;
+    /* Stronger base glow so the wordmark reads clearly over the dark core */
+    text-shadow: 0 0 12px rgba(111, 211, 231, 0.45), 0 2px 10px rgba(0, 0, 0, 0.85);
+}
+
+.agent-ambient .agent-status-line {
+    margin-top: 8px;
+    color: var(--accent-cyan);
+    opacity: 0.85;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+}
+
+/* Bottom tray gets a soft gradient so chips stay legible over the core
+   on very short screens, and reads as a distinct control zone. */
+.agent-chat-full .suggestion-chips,
+.agent-chat-full .chat-input-bar {
+    position: relative;
+    z-index: 2;
+}
+.agent-chat-full .suggestion-chips {
+    background: linear-gradient(to top, rgba(4, 7, 13, 0.55), rgba(4, 7, 13, 0));
+    border-radius: 10px;
+    padding-top: 6px;
+    /* Single scrollable row: keeps the bottom tray a predictable height so
+       the wordmark never gets pushed into the chips on narrow screens. */
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;            /* Firefox */
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+}
+.agent-chat-full .suggestion-chips::-webkit-scrollbar {
+    display: none;                    /* WebKit */
+}
+.agent-chat-full .suggestion-chips .chip {
+    flex: 0 0 auto;                   /* don't shrink; scroll instead */
+    scroll-snap-align: start;
 }
 
 /* Chat occupies the whole pane; translucency lets the core glow through */
